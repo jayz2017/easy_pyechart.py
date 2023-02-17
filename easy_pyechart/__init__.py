@@ -1,10 +1,29 @@
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from typing import Any, Optional
+from easy_pyechart import constants
+
+class baseParams():
+    def __init__(
+        self,
+        title: Optional[str] = None,
+        subTitle: Optional[str] = None,
+        themeType=constants.defualt_theme,
+        backgroundImageUrl: Optional[str] = None,
+    ):
+        self.opts: dict = {
+            "title": title,
+            "subTitle": subTitle,
+            "themeType": themeType,
+            "backgroundImageUrl": backgroundImageUrl,
+        }
+
 '''
 初始化图列的配置，
 设置背景图片，或者是使用主题样式
 '''
+
+
 def _init_lengend(self):
     chart = self.opts['lengend']
     backgroundImageUrl = self.opts['backgroundImageUrl']
@@ -19,11 +38,7 @@ def _init_lengend(self):
     )
     # 添加背景图片
     if backgroundImageUrl != None and backgroundImageUrl.lstrip() != '':
-        _img = """
-            var img = new Image(); img.src = '{backgroundImageUrl}';
-            """
-        _img = _img.format(
-            backgroundImageUrl=backgroundImageUrl).replace('\\', '\\\\')
+        _img = _setBackGroudImage_jsCode(backgroundImageUrl)
         c.add_js_funcs(
             _img
         )
@@ -31,6 +46,8 @@ def _init_lengend(self):
 
 
 '''柱状图的核心配置'''
+
+
 def _get_base_example(self):
     title = self.opts['title']
     subtitle = self.opts['subTitle']
@@ -51,7 +68,7 @@ def _get_base_example(self):
     if legendsOpts == None or type(legendsOpts) != list or len(legendsOpts) < 1:
         return None
 
-    c=_init_lengend(self)
+    c = _init_lengend(self)
     c.add_xaxis(lableList)
     for i in range(len(valueList)):
         # 是否堆叠
@@ -99,6 +116,8 @@ def _get_base_example(self):
 
 
 '''3D型柱状图配置'''
+
+
 def _3D_base_config(self):
     chart = self.opts['lengend']
     _ydata = self.opts['ydata']
@@ -111,7 +130,7 @@ def _3D_base_config(self):
         yaxis3d_opts=opts.Axis3DOpts(type_="category", data=x2_list),
         zaxis3d_opts=opts.Axis3DOpts(type_="value"),
     )
-    
+
     chart.set_global_opts(
         visualmap_opts=opts.VisualMapOpts(
             max_=20,
@@ -132,16 +151,19 @@ def _3D_base_config(self):
     )
     return chart
 
+
 '''饼状图的基本配置项'''
+
+
 def pie_base_config(self):
     source_list = self.opts['sourceList']
-    #单行图列所布局分布
+    # 单行图列所布局分布
     layOutCenter = self.opts['layOutCenter']
     title = self.opts['title']
     subtitle = self.opts['subTitle']
-    radius=self.opts['radius']
+    radius = self.opts['radius']
 
-    c=_init_lengend(self)
+    c = _init_lengend(self)
     c.add_dataset(
         source=source_list
     )
@@ -156,57 +178,105 @@ def pie_base_config(self):
             encode={"itemName": _lableList[0], "value": _lableList[i+1]},
         )
     c.set_global_opts(
-        title_opts=opts.TitleOpts(title=title,subtitle=subtitle),
+        title_opts=opts.TitleOpts(title=title, subtitle=subtitle),
         legend_opts=opts.LegendOpts(pos_left="30%", pos_top="2%"),
     )
     return c
 
+
 '''涟漪图基本配置'''
+
+
 def scatter_base_config(self):
     xList = self.opts['xList']
     yList = self.opts['yList']
-    title =  self.opts['title']
-    subtitle =  self.opts['subTitle']
-    _symbolType=self.opts['symbolType']
-    c=_init_lengend(self)
+    title = self.opts['title']
+    subtitle = self.opts['subTitle']
+    _symbolType = self.opts['symbolType']
+    c = _init_lengend(self)
     c.add_xaxis(xList)
     c.add_yaxis("", yList, symbol=_symbolType)
     c.set_global_opts(
-        title_opts=opts.TitleOpts(title=title,subtitle=subtitle),
-        xaxis_opts=opts.AxisOpts(splitline_opts=opts.SplitLineOpts(is_show=True)),
-        yaxis_opts=opts.AxisOpts(splitline_opts=opts.SplitLineOpts(is_show=True)),
+        title_opts=opts.TitleOpts(title=title, subtitle=subtitle),
+        xaxis_opts=opts.AxisOpts(
+            splitline_opts=opts.SplitLineOpts(is_show=True)),
+        yaxis_opts=opts.AxisOpts(
+            splitline_opts=opts.SplitLineOpts(is_show=True)),
     )
     return c
 
+
 '''漏斗图基本配置项'''
+
+
 def _funnel_base_config(self):
     xList = self.opts['xList']
     yList = self.opts['yList']
-    title =  self.opts['title']
-    subtitle =  self.opts['subTitle']
+    title = self.opts['title']
+    subtitle = self.opts['subTitle']
     data = [[xList[i], yList[i]] for i in range(len(xList))]
-    c=_init_lengend(self)
+    c = _init_lengend(self)
     c.add(
         series_name="",
         data_pair=data,
         gap=2,
-        tooltip_opts=opts.TooltipOpts(trigger="item", formatter="{a} <br/>{b} : {c}%"),
+        tooltip_opts=opts.TooltipOpts(
+            trigger="item", formatter="{a} <br/>{b} : {c}%"),
         label_opts=opts.LabelOpts(is_show=True, position="inside"),
         itemstyle_opts=opts.ItemStyleOpts(border_color="#fff", border_width=1),
     )
-    c.set_global_opts(title_opts=opts.TitleOpts(title=title, subtitle=subtitle))
+    c.set_global_opts(title_opts=opts.TitleOpts(
+        title=title, subtitle=subtitle))
     return c
-    
+
+
 '''仪表盘的基本配置项'''
+
+
 def _gauge_base_config(self):
-    c=_init_lengend(self)
+    c = _init_lengend(self)
     seriesName = self.opts['seriesName']
     dataList = self.opts['dataList']
-    c.add(series_name=seriesName, data_pair=dataList)
+    _axisline_opts = None
+    if self.opts['color'] != None:
+        _axisline_opts = opts.AxisLineOpts(
+            linestyle_opts=opts.LineStyleOpts(
+                color=self.opts['color'], width=30
+            )
+        )
+    c.add(series_name=seriesName, data_pair=dataList,
+          axisline_opts=_axisline_opts)
     c.set_global_opts(
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'], subtitle=self.opts['subtitle']),
         legend_opts=opts.LegendOpts(is_show=False),
-        tooltip_opts=opts.TooltipOpts(is_show=True, formatter="{a} <br/>{b} : {c}%"),
+        tooltip_opts=opts.TooltipOpts(
+            is_show=True, formatter="{a} <br/>{b} : {c}%"),
     )
+    return c
+
+
+'''关系图的基本配置项,简单的圆弧型设置的关系图'''
+def _graph_base_config(self):
+    _nodes=  self.opts['nodes']
+    _links=  self.opts['links']
+    _categories=  self.opts['categories']
+    c = _init_lengend(self)
+    c.add(
+        "",
+        nodes=_nodes,
+        links=_links,
+        categories=_categories,
+        layout="circular",
+        is_rotate_label=True,
+        linestyle_opts=opts.LineStyleOpts(color="source", curve=0.3),
+        label_opts=opts.LabelOpts(position="right"),
+    )
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(title= self.opts['title'],subtitle= self.opts['subtitle']),
+        legend_opts=opts.LegendOpts(orient="vertical", pos_left="2%", pos_top="20%"),
+    )
+    return c
 
 
 
@@ -217,42 +287,7 @@ def _gauge_base_config(self):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''定义水印'''
+'''定义水印 '''
 def set_water_marking(waterText):
     return [
         opts.GraphicGroup(
@@ -290,7 +325,41 @@ def set_water_marking(waterText):
         )
     ]
 
+'''设置引入小图片'''
+def _set_logo_(imageUrl):
+    return [
+            opts.GraphicImage(
+                graphic_item=opts.GraphicItem(
+                    id_="logo", right=20, top=20, z=-10, bounding="raw", origin=[75, 75]
+                ),
+                graphic_imagestyle_opts=opts.GraphicImageStyleOpts(
+                    image=imageUrl,
+                    width=150,
+                    height=150,
+                    opacity=0.4,
+                ),
+            )
+        ]
 
+'''这只logo 旋转的功能，为何返回的是字符串，原因是可以与设置背景图片的那段js代码向 公共使用'''
+def _set_logo_ratate():
+    return """
+        var rotation = 0;
+        setInterval(function () {
+            chart_1234.setOption({
+                graphic: {
+                    id: 'logo',
+                    rotation: (rotation += Math.PI / 360) % (Math.PI * 2)
+                }
+            });
+        }, 30);
+    """
 
-
-
+#设置背景图片的js操作代码
+def _setBackGroudImage_jsCode(imageUrl):
+    _img = """
+            var img = new Image(); img.src = '{backgroundImageUrl}';
+            """
+    _img = _img.format(
+            backgroundImageUrl=imageUrl).replace('\\', '\\\\')
+    return  _img      

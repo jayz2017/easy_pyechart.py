@@ -2,9 +2,6 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import easy_parallel,baseParams
-from pyecharts import options as opts
-from pyecharts.charts import Bar, Line
-
 
 data = [
     [1, 91, 45, 125, 0.82, 34, 23, "良"],

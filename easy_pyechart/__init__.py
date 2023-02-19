@@ -567,6 +567,75 @@ def parallel_base_config(self):
         title=self.opts['title'], subtitle=self.opts['subTitle']))
     return c
 
+'''饼状图基本配置'''
+def double_pie_base_config(self):
+    c = _init_lengend(self)
+    #判断是否有富文本的标签展示
+    _label_opts =opts.LabelOpts(is_show=False, position="center")
+    for i in self.opts['dataList']:
+        if i['isRichLabel'] == True:
+            _label_opts =  opts.LabelOpts(
+                position="outside",
+                formatter="{a|{a}}{abg|}\n{hr|}\n {b|{b}: }{c}  {per|{d}%}  ",
+                background_color="#eee",
+                border_color="#eee",
+                border_width=2,
+                border_radius=4,
+                is_show=True,
+                rich={
+                    "a": {"color": "#999", "lineHeight": 22, "align": "center"},
+                    "abg": {
+                        "backgroundColor": "#e3e3e3",
+                        "width": "100%",
+                        "align": "right",
+                        "height": 22,
+                        "borderRadius": [4, 4, 0, 0],
+                    },
+                    "hr": {
+                        "borderColor": "#aaa",
+                        "width": "100%",
+                        "borderWidth": 0.5,
+                        "height": 0,
+                    },
+                    "b": {"fontSize": 16, "lineHeight": 33},
+                    "per": {
+                        "color": "#eee",
+                        "backgroundColor": "#334455",
+                        "padding": [2, 4],
+                        "borderRadius": 2,
+                    },
+                },
+            )
+        c.add(
+            series_name = i['name'],
+            data_pair= i['value'],
+            rosetype= i ['type'],
+            radius=i ['radius'],
+            center=i ['centerLayOut'],
+            label_opts=_label_opts,
+        )
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'],
+            pos_left="center",
+            pos_top="20",
+            title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
+        ),
+        #legend_opts=opts.LegendOpts(is_show=False),
+        legend_opts=opts.LegendOpts(type_="scroll", pos_left="80%", orient="vertical"),
+    )
+    c.set_series_opts(
+        tooltip_opts=opts.TooltipOpts(
+            trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
+        ),
+        label_opts=opts.LabelOpts(color="rgba(255, 255, 255, 0.3)"),
+    )
+    return c
+
+
+
+
+
 
 '''定义水印 '''
 

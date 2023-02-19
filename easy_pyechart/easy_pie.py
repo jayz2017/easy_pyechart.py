@@ -5,7 +5,7 @@ from pyecharts.charts import Pie
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from easy_pyechart import pie_base_config,constants
+from easy_pyechart import pie_base_config,constants,double_pie_base_config
 
 class epie():
     def __init__(
@@ -28,6 +28,13 @@ class epie():
                            "radius":radius,
                            "backgroundImageUrl":backgroundImageUrl,
                            }
+        #简单的单个饼状图模型
     def dataset_pie(self):
         return pie_base_config(self)
+    
+    #复杂的饼状图模型，可以设置饼图的样式，以及叠加多个饼图
+    def double_pie(self,dataList):
+        self.opts['dataList'] = dataList
+        return double_pie_base_config(self)
+
 

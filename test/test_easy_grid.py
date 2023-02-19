@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import easy_grid, basePosition
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Grid, Line
+from pyecharts.charts import Bar, Line
 
 bar = (
     Bar()

@@ -3,6 +3,7 @@ from pyecharts.commons.utils import JsCode
 from typing import Any, Optional, Union
 from easy_pyechart import constants
 from pyecharts.options.series_options import Numeric
+from pyecharts.charts import Page
 
 
 class baseParams():
@@ -381,7 +382,7 @@ def line_base_config(self):
                 markpoint_opts=_setMarkPoint,
                 markline_opts=_setMarkLine,
                 linestyle_opts=opts.LineStyleOpts(
-                    width=self.opts['lineStyleWidth']),                   
+                    width=self.opts['lineStyleWidth']),
                 symbol=symbol,
                 symbol_size=symbol_size,
                 itemstyle_opts=itemstyle_opts
@@ -504,6 +505,69 @@ def gradientLine_base_config(self):
     return c
 
 
+# 水球图
+def liquid_base_config(self):
+    c = _init_lengend(self)
+    label_opts = None
+    if self.opts['labelOpts'] == True:
+        label_opts = opts.LabelOpts(
+            font_size=50,
+            formatter=JsCode(
+                """function (param) {
+                    return (Math.floor(param.value * 10000) / 100) + '%';
+                }"""
+            ),
+            position="inside",
+        )
+    c.add("lq", self.opts['yList'], label_opts=label_opts)
+    c.set_global_opts(title_opts=opts.TitleOpts(
+        title=self.opts['title'], subtitle=self.opts['subTitle']))
+    return c
+
+
+# 平行坐标系图
+def parallel_base_config(self):
+    c = _init_lengend(self)
+    schemaList = []
+    _lableList = self.opts['lableList']
+    for i in range(len(_lableList)):
+        if self.opts['isLableStardFlag'] == True:
+            if i == 0:
+                schemaList.append(opts.ParallelAxisOpts(
+                    dim=i,
+                    name=_lableList[i],
+                    type_=self.opts['schemaType'],
+                    data=self.opts['ydata']
+                )
+                )
+            else:
+                schemaList.append(opts.ParallelAxisOpts(dim=i,
+                                                        name=_lableList[i]
+                                                        ))
+        else:
+            if i+1 == len(_lableList):
+                schemaList.append(opts.ParallelAxisOpts(
+                    dim=i,
+                    name=_lableList[i],
+                    type_=self.opts['schemaType'],
+                    data=self.opts['ydata']
+                )
+                )
+            else:
+                schemaList.append(opts.ParallelAxisOpts(dim=i,
+                                                        name=_lableList[i]
+                                                        ))
+
+    c.add_schema(schemaList)
+    for i in self.opts['valueList']:
+        c.add(i['name'], i['value'], is_smooth=self.opts['isSmooth'],
+              linestyle_opts=opts.LineStyleOpts(width=self.opts['lineStyleWidth']))
+
+    c.set_global_opts(title_opts=opts.TitleOpts(
+        title=self.opts['title'], subtitle=self.opts['subTitle']))
+    return c
+
+
 '''定义水印 '''
 
 
@@ -592,7 +656,7 @@ def _setBackGroudImage_jsCode(imageUrl):
     return _img
 
 
-'''定义多个图表组合的页面配置方式'''
+'''定义多个图表组合的页面配置方式，grid 平行组件'''
 
 
 def _grid_base_config(self):
@@ -606,3 +670,13 @@ def _grid_base_config(self):
         c.add(i['chart'], grid_opts=opts.GridOpts(pos_left=_pos[0],
               pos_right=_pos[1], pos_top=_pos[2], pos_bottom=_pos[3]), is_control_axis_index=True)
     return c
+
+
+'''页面组件的设置'''
+
+
+def _page_layout_base_config(self):
+    page = Page(layout=Page.DraggablePageLayout)
+    for i in self.opts['charts']:
+        page.add(i)
+    return i

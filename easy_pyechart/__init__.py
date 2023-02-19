@@ -20,7 +20,10 @@ class baseParams():
             "backgroundImageUrl": backgroundImageUrl,
         }
 
+
 '''位置上的定位定义类'''
+
+
 class basePosition():
     def __init__(
         self,
@@ -36,6 +39,7 @@ class basePosition():
             pos_bottom
         ]
 
+
 '''
 初始化图列的配置，
 设置背景图片，或者是使用主题样式
@@ -44,6 +48,19 @@ class basePosition():
 
 def _init_lengend(self):
     chart = self.opts['lengend']
+
+    try:
+        if self.opts['background_color_js'] != None:
+            c = (
+                chart(init_opts=opts.InitOpts(
+                    bg_color=JsCode(self.opts['background_color_js']))
+                )
+            )
+            return c
+    except:
+        # 这里的设置为异常什么都不干的原因是background_color_js是后来的属性，在没有做公共配置的其他图例中可能报错，为了不影响其他代码的执行
+        ''
+
     backgroundImageUrl = self.opts['backgroundImageUrl']
     _initOpts = None
     if backgroundImageUrl != None and backgroundImageUrl.lstrip() != '':
@@ -310,87 +327,181 @@ def _graph_base_config(self):
     return c
 
 
-
-
-
 '''设置基本折线图的配置'''
 
+
 def line_base_config(self):
-    c= _init_lengend(self)
-    c.add_xaxis(self.opts['xList'])
+    c = _init_lengend(self)
+    _xaxis = None
+    if self.opts['_xaxis'] != None:
+        _xaxis = self.opts['_xaxis']
+    try:
+        c.add_xaxis(self.opts['xList'], xaxis=_xaxis)
+    except:
+        c.add_xaxis(self.opts['xList'])
+    # 判断是否是圆润
+    try:
+        if self.opts['_is_smooth'] == True:
+            _is_smooth = self.opts['_is_smooth']
+    except:
+        _is_smooth = None
+    symbol = None
+    symbol_size = None
+    itemstyle_opts = None
+    # 设置折线图上折点的样式
+    if self.opts['symbolStype'] != None:
+        symbol = self.opts['symbolStype'],
+        symbol_size = 20,
+        itemstyle_opts = opts.ItemStyleOpts(
+            border_width=3
+        )
+
+    # 设置y轴的值
     for i in self.opts['yList']:
-        _setMarkPoint=None
-        _setMarkLine=None
+        _setMarkPoint = None
+        _setMarkLine = None
         try:
-            if i['setMarkPoint'] !=None and len(i['setMarkPoint'])>0  :
+            if i['setMarkPoint'] != None and len(i['setMarkPoint']) > 0:
                 _setMarkPoint = opts.MarkPointOpts(
-                                    data=i['setMarkPoint']
-                                )
-            if i['setMarkLine'] !=None and len(i['setMarkLine'])>0 :
-                _setMarkLine= opts.MarkLineOpts(
-                                data=i['setMarkLine'] 
-                            )
-        except :
-            _setMarkPoint=None
-            _setMarkLine=None
-        c.add_yaxis(
-        series_name=i['name'],
-        y_axis=i['value'],
-        markpoint_opts=_setMarkPoint,
-        markline_opts = _setMarkLine
-    )
-        #如果横坐标的标签值比较长的话，就旋转一下
-    xaxis_opts_param=None
+                    data=i['setMarkPoint']
+                )
+            if i['setMarkLine'] != None and len(i['setMarkLine']) > 0:
+                _setMarkLine = opts.MarkLineOpts(
+                    data=i['setMarkLine']
+                )
+        except:
+            _setMarkPoint = None
+            _setMarkLine = None
+
+        if symbol != None:
+            c.add_yaxis(
+                series_name=i['name'],
+                y_axis=i['value'],
+                is_smooth=_is_smooth,
+                markpoint_opts=_setMarkPoint,
+                markline_opts=_setMarkLine,
+                linestyle_opts=opts.LineStyleOpts(
+                    width=self.opts['lineStyleWidth']),                   
+                symbol=symbol,
+                symbol_size=symbol_size,
+                itemstyle_opts=itemstyle_opts
+            )
+        else:
+            c.add_yaxis(
+                series_name=i['name'],
+                y_axis=i['value'],
+                is_smooth=_is_smooth,
+                markpoint_opts=_setMarkPoint,
+                markline_opts=_setMarkLine,
+                linestyle_opts=opts.LineStyleOpts(
+                    width=self.opts['lineStyleWidth'])
+            )
+        # 如果横坐标的标签值比较长的话，就旋转一下
+    xaxis_opts_param = None
     _max_lable_ = max(self.opts['xList'])
     if (type(_max_lable_) == str and len(_max_lable_) >= 5) or (type(_max_lable_) == int and _max_lable_ >= 1000):
         xaxis_opts_param = opts.AxisOpts(
             axislabel_opts=opts.LabelOpts(rotate=-15),
             type_="category", boundary_gap=False
-            )
+        )
     else:
         xaxis_opts_param = opts.AxisOpts(
-            type_="category", boundary_gap=False
-            )    
+            axistick_opts=opts.AxisTickOpts(is_align_with_label=True),
+            type_="category",  is_scale=False, boundary_gap=False
+        )
     c.set_global_opts(
-        title_opts=opts.TitleOpts(title=self.opts['title'], subtitle=self.opts['subTitle']),
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'], subtitle=self.opts['subTitle']),
         xaxis_opts=xaxis_opts_param,
+    )
+
+    # 设置阴影
+    _areastyle_opts = None
+    if self.opts['areastyleOpt'] == True:
+        _areastyle_opts = opts.AreaStyleOpts(opacity=0.5)
+    c.set_series_opts(
+        areastyle_opts=_areastyle_opts,
+        label_opts=opts.LabelOpts(is_show=True),
     )
     return c
 
+# 渐变色的折线图配置
 
 
+def gradientLine_base_config(self):
+    background_color_js = (
+        "new echarts.graphic.LinearGradient(0, 0, 0, 1, "
+        "[{offset: 0, color: '#c86589'}, {offset: 1, color: '#06a7ff'}], false)"
+    )
+    self.opts['background_color_js'] = background_color_js
+    c = _init_lengend(self)
+    area_color_js = (
+        "new echarts.graphic.LinearGradient(0, 0, 0, 1, "
+        "[{offset: 0, color: '#eb64fb'}, {offset: 1, color: '#3fbbff0d'}], false)"
+    )
+    c.add_xaxis(xaxis_data=self.opts['xList'])
 
+    for i in self.opts['yList']:
+        c.add_yaxis(
+            series_name=i['name'],
+            y_axis=i['value'],
+            is_smooth=True,
+            is_symbol_show=True,
+            symbol="circle",
+            symbol_size=6,
+            linestyle_opts=opts.LineStyleOpts(color="#fff"),
+            label_opts=opts.LabelOpts(
+                is_show=True, position="top", color="white"),
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="red", border_color="#fff", border_width=3
+            ),
+            tooltip_opts=opts.TooltipOpts(is_show=False),
+            areastyle_opts=opts.AreaStyleOpts(
+                color=JsCode(area_color_js), opacity=1),
+        )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'],
+            subtitle=self.opts['subTitle'],
+            pos_bottom="5%",
+            pos_left="center",
+            title_textstyle_opts=opts.TextStyleOpts(
+                color="#fff", font_size=16),
+        ),
+        xaxis_opts=opts.AxisOpts(
+            type_="category",
+            boundary_gap=False,
+            axislabel_opts=opts.LabelOpts(margin=30, color="#ffffff63"),
+            axisline_opts=opts.AxisLineOpts(is_show=False),
+            axistick_opts=opts.AxisTickOpts(
+                is_show=True,
+                length=25,
+                linestyle_opts=opts.LineStyleOpts(color="#ffffff1f"),
+            ),
+            splitline_opts=opts.SplitLineOpts(
+                is_show=True, linestyle_opts=opts.LineStyleOpts(color="#ffffff1f")
+            ),
+        ),
+        yaxis_opts=opts.AxisOpts(
+            type_="value",
+            position="right",
+            axislabel_opts=opts.LabelOpts(margin=20, color="#ffffff63"),
+            axisline_opts=opts.AxisLineOpts(
+                linestyle_opts=opts.LineStyleOpts(width=2, color="#fff")
+            ),
+            axistick_opts=opts.AxisTickOpts(
+                is_show=True,
+                length=15,
+                linestyle_opts=opts.LineStyleOpts(color="#ffffff1f"),
+            ),
+            splitline_opts=opts.SplitLineOpts(
+                is_show=True, linestyle_opts=opts.LineStyleOpts(color="#ffffff1f")
+            ),
+        ),
+        legend_opts=opts.LegendOpts(is_show=False),
+    )
+    return c
 
 
 '''定义水印 '''

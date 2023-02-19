@@ -1,7 +1,9 @@
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from easy_pyechart import constants
+from pyecharts.options.series_options import Numeric
+
 
 class baseParams():
     def __init__(
@@ -17,6 +19,22 @@ class baseParams():
             "themeType": themeType,
             "backgroundImageUrl": backgroundImageUrl,
         }
+
+'''位置上的定位定义类'''
+class basePosition():
+    def __init__(
+        self,
+        pos_left: Union[Numeric, str, None] = None,
+        pos_top: Union[Numeric, str, None] = None,
+        pos_right: Union[Numeric, str, None] = None,
+        pos_bottom: Union[Numeric, str, None] = None
+    ):
+        self.opts: list = [
+            pos_left,
+            pos_right,
+            pos_top,
+            pos_bottom
+        ]
 
 '''
 初始化图列的配置，
@@ -42,6 +60,15 @@ def _init_lengend(self):
         c.add_js_funcs(
             _img
         )
+    return c
+
+
+def _init_grid_lengend(self):
+    chart = self.opts['lengend']
+    c = (
+        chart(init_opts=opts.InitOpts(
+            theme=self.opts['themeType'], width="1200px", height="800px"))
+    )
     return c
 
 
@@ -257,10 +284,12 @@ def _gauge_base_config(self):
 
 
 '''关系图的基本配置项,简单的圆弧型设置的关系图'''
+
+
 def _graph_base_config(self):
-    _nodes=  self.opts['nodes']
-    _links=  self.opts['links']
-    _categories=  self.opts['categories']
+    _nodes = self.opts['nodes']
+    _links = self.opts['links']
+    _categories = self.opts['categories']
     c = _init_lengend(self)
     c.add(
         "",
@@ -273,8 +302,58 @@ def _graph_base_config(self):
         label_opts=opts.LabelOpts(position="right"),
     )
     c.set_global_opts(
-        title_opts=opts.TitleOpts(title= self.opts['title'],subtitle= self.opts['subtitle']),
-        legend_opts=opts.LegendOpts(orient="vertical", pos_left="2%", pos_top="20%"),
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'], subtitle=self.opts['subtitle']),
+        legend_opts=opts.LegendOpts(
+            orient="vertical", pos_left="2%", pos_top="20%"),
+    )
+    return c
+
+
+
+
+
+'''设置基本折线图的配置'''
+
+def line_base_config(self):
+    c= _init_lengend(self)
+    c.add_xaxis(self.opts['xList'])
+    for i in self.opts['yList']:
+        _setMarkPoint=None
+        _setMarkLine=None
+        try:
+            if i['setMarkPoint'] !=None and len(i['setMarkPoint'])>0  :
+                _setMarkPoint = opts.MarkPointOpts(
+                                    data=i['setMarkPoint']
+                                )
+            if i['setMarkLine'] !=None and len(i['setMarkLine'])>0 :
+                _setMarkLine= opts.MarkLineOpts(
+                                data=i['setMarkLine'] 
+                            )
+        except :
+            _setMarkPoint=None
+            _setMarkLine=None
+        c.add_yaxis(
+        series_name=i['name'],
+        y_axis=i['value'],
+        markpoint_opts=_setMarkPoint,
+        markline_opts = _setMarkLine
+    )
+        #如果横坐标的标签值比较长的话，就旋转一下
+    xaxis_opts_param=None
+    _max_lable_ = max(self.opts['xList'])
+    if (type(_max_lable_) == str and len(_max_lable_) >= 5) or (type(_max_lable_) == int and _max_lable_ >= 1000):
+        xaxis_opts_param = opts.AxisOpts(
+            axislabel_opts=opts.LabelOpts(rotate=-15),
+            type_="category", boundary_gap=False
+            )
+    else:
+        xaxis_opts_param = opts.AxisOpts(
+            type_="category", boundary_gap=False
+            )    
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(title=self.opts['title'], subtitle=self.opts['subTitle']),
+        xaxis_opts=xaxis_opts_param,
     )
     return c
 
@@ -287,7 +366,36 @@ def _graph_base_config(self):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''定义水印 '''
+
+
 def set_water_marking(waterText):
     return [
         opts.GraphicGroup(
@@ -325,23 +433,29 @@ def set_water_marking(waterText):
         )
     ]
 
+
 '''设置引入小图片'''
+
+
 def _set_logo_(imageUrl):
     return [
-            opts.GraphicImage(
-                graphic_item=opts.GraphicItem(
-                    id_="logo", right=20, top=20, z=-10, bounding="raw", origin=[75, 75]
-                ),
-                graphic_imagestyle_opts=opts.GraphicImageStyleOpts(
-                    image=imageUrl,
-                    width=150,
-                    height=150,
-                    opacity=0.4,
-                ),
-            )
-        ]
+        opts.GraphicImage(
+            graphic_item=opts.GraphicItem(
+                id_="logo", right=20, top=20, z=-10, bounding="raw", origin=[75, 75]
+            ),
+            graphic_imagestyle_opts=opts.GraphicImageStyleOpts(
+                image=imageUrl,
+                width=150,
+                height=150,
+                opacity=0.4,
+            ),
+        )
+    ]
+
 
 '''这只logo 旋转的功能，为何返回的是字符串，原因是可以与设置背景图片的那段js代码向 公共使用'''
+
+
 def _set_logo_ratate():
     return """
         var rotation = 0;
@@ -355,11 +469,29 @@ def _set_logo_ratate():
         }, 30);
     """
 
-#设置背景图片的js操作代码
+# 设置背景图片的js操作代码
+
+
 def _setBackGroudImage_jsCode(imageUrl):
     _img = """
             var img = new Image(); img.src = '{backgroundImageUrl}';
             """
     _img = _img.format(
-            backgroundImageUrl=imageUrl).replace('\\', '\\\\')
-    return  _img      
+        backgroundImageUrl=imageUrl).replace('\\', '\\\\')
+    return _img
+
+
+'''定义多个图表组合的页面配置方式'''
+
+
+def _grid_base_config(self):
+    c = _init_grid_lengend(self)
+    _charts = self.opts['charts']
+    for i in _charts:
+        # 左右上下4个值
+        _pos = i['position']
+        if len(_pos) != 4:
+            return
+        c.add(i['chart'], grid_opts=opts.GridOpts(pos_left=_pos[0],
+              pos_right=_pos[1], pos_top=_pos[2], pos_bottom=_pos[3]), is_control_axis_index=True)
+    return c

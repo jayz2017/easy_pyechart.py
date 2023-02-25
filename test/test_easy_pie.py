@@ -32,10 +32,14 @@ def double_pie():
                 {
                 "name": '1',
                 "value": data_pair,
+                #isRichLabel 控制着扇面部分lable值的展示风格，true 为:{a|{a}}{abg|}\n{hr|}\n {b|{b}: }{c}  {per|{d}%} 
+                #false : {a} <br/>{b}: {c} ({d}%)
+                #
                 "isRichLabel":False,
                 # 饼图的半径，数组的第一项是内半径，第二项是外半径
                 # 默认设置成百分比，相对于容器高宽中较小的一项的一半
-                "radius":"55%",
+                #radius只有一个数时，为面积类型的展示图
+                "radius":["40%", "55%"],
                 # 是否展示成南丁格尔图，通过半径区分数据大小，有'radius'和'area'两种模式。
                 # radius：扇区圆心角展现数据的百分比，半径展现数据的大小
                 # area：所有扇区圆心角相同，仅通过半径展现数据大小

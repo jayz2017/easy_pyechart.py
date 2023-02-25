@@ -578,10 +578,10 @@ def double_pie_base_config(self):
                 position="outside",
                 formatter="{a|{a}}{abg|}\n{hr|}\n {b|{b}: }{c}  {per|{d}%}  ",
                 background_color="#eee",
-                border_color="#eee",
-                border_width=2,
+                border_color="#aaa",
+                border_width=1,
                 border_radius=4,
-                is_show=True,
+                #is_show=True,
                 rich={
                     "a": {"color": "#999", "lineHeight": 22, "align": "center"},
                     "abg": {
@@ -624,12 +624,13 @@ def double_pie_base_config(self):
         #legend_opts=opts.LegendOpts(is_show=False),
         legend_opts=opts.LegendOpts(type_="scroll", pos_left="80%", orient="vertical"),
     )
-    c.set_series_opts(
-        tooltip_opts=opts.TooltipOpts(
-            trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
-        ),
-        label_opts=opts.LabelOpts(color="rgba(255, 255, 255, 0.3)"),
-    )
+    if self.opts['dataList'][0]['isRichLabel']==False:
+        c.set_series_opts(
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
+            ),
+            label_opts=opts.LabelOpts(color="red"),
+        )
     return c
 
 

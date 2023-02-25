@@ -10,7 +10,7 @@ from easy_pyechart import baseParams,_graph_base_config
 '''
 圆弧型的关系图
 '''
-class eGraph(baseParams):
+class eGraph():
     def __init__(
         self,
         nodes:Optional[list] = [],
@@ -23,6 +23,7 @@ class eGraph(baseParams):
                            "links":links,
                            "categories":categories
                            }
-        self.opts.update(baseParams.opts)  
-    def excute_eGraph(self):
+          
+    def excute_eGraph(self,baseParams):
+        self.opts.update(baseParams.opts)
         return _graph_base_config(self)    

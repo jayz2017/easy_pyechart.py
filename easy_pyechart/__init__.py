@@ -4,6 +4,11 @@ from typing import Any, Optional, Union
 from easy_pyechart import constants
 from pyecharts.options.series_options import Numeric
 from pyecharts.charts import Page
+import random
+from pyecharts.options import ComponentTitleOpts
+
+default_color_list=["#FFC125","#FF4040","#FF00FF","#C0FF3E","#9A32CD","#B03060","#48D1CC","#00EE00","#0000FF","#00F5FF","#228B22"]
+
 
 
 class baseParams():
@@ -622,25 +627,118 @@ def double_pie_base_config(self):
             title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
         ),
         #legend_opts=opts.LegendOpts(is_show=False),
-        legend_opts=opts.LegendOpts(type_="scroll", pos_left="80%", orient="vertical"),
+        legend_opts=opts.LegendOpts(orient="scroll", pos_top="15%", pos_left="2%" )
     )
     if self.opts['dataList'][0]['isRichLabel']==False:
         c.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
-                trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
+                trigger="item", formatter="{b}: {c}"
             ),
             label_opts=opts.LabelOpts(color="red"),
         )
     return c
 
+#雷达图的基本配置项
+def radar_base_config(self):
+    c = _init_lengend(self)
+    _schema=[]
+    for i in self.opts['lableList']:
+        _schema.append(
+            opts.RadarIndicatorItem(name=i["name"], max_=i["value"])
+        )
+    _color =random.sample(default_color_list, len(self.opts['valueList']))
+    c.add_schema(   schema = _schema,
+                    splitarea_opt=opts.SplitAreaOpts(is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1)  ),
+                    textstyle_opts=opts.TextStyleOpts(color=_color[0]),
+                )
+    
+    for i in range(len(self.opts['valueList'])):
+        _v = self.opts['valueList'][i]
+        c.add(
+             series_name= _v["name"],
+            data=_v["value"],
+            linestyle_opts=opts.LineStyleOpts(color=_color[i]),
+        )
+
+    c.set_series_opts(label_opts=opts.LabelOpts(is_show=True))
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(title=self.opts['title'],subtitle=self.opts['subTitle']), legend_opts=opts.LegendOpts(pos_left='legft',pos_top='15%',orient="vertical")
+    )
+    return c
+
+#带有阴影区域设置的雷达图的基本配置项，而且图例的样式时圆形，而不是六角型
+def round_radar_base_config(self):
+    c = _init_lengend(self)
+    c.set_colors(["#4587E7"])
+    c.add_schema(
+        schema=self.opts['lableList'],
+        shape="circle",
+        center=["50%", "50%"],
+        radius="80%",
+        angleaxis_opts=opts.AngleAxisOpts(
+            min_=0,
+            max_=360,
+            is_clockwise=False,
+            interval=5,
+            axistick_opts=opts.AxisTickOpts(is_show=False),
+            axislabel_opts=opts.LabelOpts(is_show=False),
+            axisline_opts=opts.AxisLineOpts(is_show=False),
+            splitline_opts=opts.SplitLineOpts(is_show=False),
+        ),
+        radiusaxis_opts=opts.RadiusAxisOpts(
+            min_=-4,
+            max_=4,
+            interval=2,
+            splitarea_opts=opts.SplitAreaOpts(
+                is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1)
+            ),
+        ),
+        polar_opts=opts.PolarOpts(),
+        splitarea_opt=opts.SplitAreaOpts(is_show=False),
+        splitline_opt=opts.SplitLineOpts(is_show=False),
+    )
+    c.add(
+        series_name=self.opts['valueList'][0]['name'],
+        data=self.opts['valueList'],
+        areastyle_opts=opts.AreaStyleOpts(opacity=0.1),
+        linestyle_opts=opts.LineStyleOpts(width=1),
+    )
+    c.set_series_opts(label_opts=opts.LabelOpts(is_show=True))
+    c.set_global_opts(
+        title_opts=opts.TitleOpts(title=self.opts['title'],subtitle=self.opts['subTitle']), legend_opts=opts.LegendOpts(pos_left='legft',pos_top='15%',orient="vertical")
+    )
+    return c
 
 
+#定义桑基图的基本配置项
+def sankey_base_config(self):
+    c=_init_lengend(self)
+    c.add(
+        self.opts['seriesName'],
+        self.opts['lableList'],
+        self.opts['valueList'],
+        linestyle_opt=opts.LineStyleOpts(opacity=0.2, curve=0.5, color="source"),
+        label_opts=opts.LabelOpts(position="right"),
+        itemstyle_opts=opts.ItemStyleOpts(border_width=1, border_color="#aaa"),
+        tooltip_opts=opts.TooltipOpts(trigger_on="mousemove"),
+
+    )
+    c.set_global_opts(title_opts=opts.TitleOpts(title=self.opts['title'],subtitle=self.opts['subTitle']), legend_opts=opts.LegendOpts(pos_left='right',pos_top='10%',orient="vertical"))
+    return c
+
+#定义table表格的基本配置
+def table_base_config(self):
+    table =self.opts['lengend']
+    c= table()
+    c.add(self.opts['headerList'], self.opts['rowList'])
+    c.set_global_opts(
+        title_opts=ComponentTitleOpts(title=self.opts['title'], subtitle=self.opts['subTitle'])
+    )
+    return c
 
 
 
 '''定义水印 '''
-
-
 def set_water_marking(waterText):
     return [
         opts.GraphicGroup(

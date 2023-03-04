@@ -736,6 +736,25 @@ def table_base_config(self):
     )
     return c
 
+#定义树类型的数据表格基本配置
+def treeMap_base_config(self):
+    table=self.opts['lengend']
+    c= table()
+    c.add(
+        series_name="option",
+        data=self.opts['dataList'],
+        visual_min=300,
+        leaf_depth=1,
+        # 标签居中为 position = "inside"
+        label_opts=opts.LabelOpts(position="inside"),
+    )
+    c.set_global_opts(
+        legend_opts=opts.LegendOpts(is_show=False),
+        title_opts=opts.TitleOpts(
+            title=self.opts['title'],subtitle=self.opts['subTitle'], pos_left="leafDepth"
+        ),
+    )
+    return c
 
 
 '''定义水印 '''

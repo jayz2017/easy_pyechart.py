@@ -49,5 +49,7 @@ def double_pie():
                 "centerLayOut":["50%", "50%"],
                 }
                 ]
-        easy_pie.epie(title='cesss').double_pie(dataList=_dataList).render("customized_pie.html")
+        f= easy_pie.epie(title='cesss').double_pie(dataList=_dataList)
+        ##.render("customized_pie.html")
+        f.render(path='customized_pie.png',pixel_ratio=5)
 double_pie()

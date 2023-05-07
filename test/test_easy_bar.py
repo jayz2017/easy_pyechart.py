@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from easy_pyechart import easy_Bar,set_water_marking
+from easy_pyechart import easy_Bar,set_water_marking,save_static_image
 
 #测试柱状图中最简单的图例模式
 def _test_eBar():
@@ -32,8 +32,8 @@ def _test_bar_line():
     _extra_value_=[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
     _p=easy_Bar.eBar(title='这个是图',lableList=_lableList,valueList=_value_list_,legendsOpts=['蒸发量','降水量'])._mixed_bar_and_line(extraYname='温度',extraYList=_extra_value_,extraLegendName='平均温度')
     _p.set_global_opts(graphic_opts=set_water_marking('牛逼class'))
-    _p.render("mixed_bar_and_line.html")
-
+    #_p.render("mixed_bar_and_line.html")
+    save_static_image(_p,"221.png")
 _test_bar_line()
 
 

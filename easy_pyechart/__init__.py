@@ -6,6 +6,11 @@ from pyecharts.options.series_options import Numeric
 from pyecharts.charts import Page
 import random
 from pyecharts.options import ComponentTitleOpts
+from pyecharts.render import make_snapshot
+from snapshot_selenium import snapshot
+import os
+
+
 
 default_color_list=["#FFC125","#FF4040","#FF00FF","#C0FF3E","#9A32CD","#B03060","#48D1CC","#00EE00","#0000FF","#00F5FF","#228B22"]
 
@@ -867,3 +872,12 @@ def _page_layout_base_config(self):
     for i in self.opts['charts']:
         page.add(i)
     return i
+
+
+#保存为图片
+def save_static_image(tagertLengend,tagertPath):
+    try:
+        make_snapshot(snapshot, tagertLengend.render(), tagertPath)
+    except:
+        print("保存图片失败")    
+    os.remove(tagertLengend.render())

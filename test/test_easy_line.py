@@ -77,7 +77,8 @@ def upDownLine():
     ]
     easy_line.eLine(lableList=xList,valueList=yList,areastyleOpt=True,isSmooth=True).up_down_x_line(baseParams(title= '降水图'),extraXlist=extra_xList).render("multiple_x_axes.html")
 
-upDownLine()
+
+#upDownLine()
 
 #渐变色的图例测试
 def test_gradientLine():

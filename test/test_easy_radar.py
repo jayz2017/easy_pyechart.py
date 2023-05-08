@@ -46,7 +46,7 @@ c_schema = [
     {"name": "市场", "max": 4, "min": -4},
 ]
 
-easy_radar.eRadar(lableList=c_schema,valueList=data).radar_angle_radius_axis(baseParams=baseParams(title='测试一下')).render("basic_radar_chart.html")
+easy_radar.eRadar(lableList=c_schema,valueList=data).radar_air_quality(baseParams=baseParams(title='测试一下')).render("basic_radar_chart.html")
 
 
 

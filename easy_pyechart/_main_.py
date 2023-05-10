@@ -180,7 +180,7 @@ def excute_easy_Line(type):
     if(type =='basicLine'):
         easyModelLegend = easyModel.basicLine(_baseParams)
     # 上下两个x轴的数据图    
-    elif(type =='basicLine'):
+    elif(type =='upDownXLine'):
         try:
             extraXlist=   _rDate['extraXlist']
         except:

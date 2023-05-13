@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from easy_pyechart import easy_Bar, easy_funnel, easy_gauge,easy_graph,easy_line,easy_liquid, easy_parallel,easy_pie,easy_radar,easy_sankey,easy_scatter,easy_table,easy_treeMap,set_water_marking, save_static_image,baseParams
+from easy_pyechart import easy_Bar, easy_funnel, easy_gauge,easy_graph,easy_line,easy_liquid, easy_parallel,easy_pie,easy_radar,easy_sankey,easy_scatter,easy_table,easy_treeMap,easy_shoot,set_water_marking, save_static_image,baseParams
 from flask import Flask, request
 import json
 app = Flask(__name__)
@@ -72,7 +72,7 @@ def easyModelLegendToSaveImage(water_marking,easyModelLegend,saveUrl):
             easyModelLegend.set_global_opts(
                 graphic_opts=set_water_marking(water_marking))
         save_static_image(easyModelLegend, saveUrl)
-
+        
 '''
 柱状图模型，暂时只有简单的柱状图、以及柱状图和折线图的符合图
 
@@ -99,8 +99,8 @@ def excute_easy_Bar(type):
             extraYname=extraYname, extraYList=extraYList, extraLegendName=extraLegendName)
         easyModelLegendToSaveImage(_getValue['water_marking'],easyModelLegend,_getValue['saveUrl'])    
     else:
-        '404'
-
+        return {'error':404}
+    return {'sucessful':200}
 
 '''漏斗图'''
 @app.post("/easy/Funnel/<type>/")
@@ -110,7 +110,7 @@ def excute_easy_Funnel(type):
                                     valueList=_getValue['valueList'], backgroundImageUrl=_getValue['backgroundImageUrl'])
     easyModelLegend = easyModel._funnel_chart()
     easyModelLegendToSaveImage(_getValue['water_marking'],easyModelLegend,_getValue['saveUrl'])    
-
+    return {'sucessful':200}
 
 '''仪表盘'''
 @app.post("/easy/gauge/<type>/")
@@ -124,6 +124,7 @@ def excute_easy_Gauge(type):
     
     easyModelLegend = easyModel.excute_eGauge()
     easyModelLegendToSaveImage(_getValue['water_marking'],easyModelLegend,_getValue['saveUrl'])    
+    return {'sucessful':200}
 
 '''
 关系图
@@ -151,6 +152,7 @@ def excute_easy_Graph(type):
     #圆弧型的关系图    
     easyModelLegend = easy_graph.eGraph(nodes,links,categories).excute_eGraph(title,subTitle)
     easyModelLegendToSaveImage(water_marking,easyModelLegend,saveUrl)  
+    return {'sucessful':200}
 
 '''折线图'''
 @app.post("/easy/Line/<type>/")
@@ -192,6 +194,7 @@ def excute_easy_Line(type):
     else:
         return 'erro,找不到对应的图例模型'    
     easyModelLegendToSaveImage(water_marking,easyModelLegend,saveUrl) 
+    return {'sucessful':200}
 
 #水球图
 @app.post("/easy/Liquid/<type>/")
@@ -216,7 +219,7 @@ def excute_easy_Liquid(type):
     else:
         return 'erro,找不到对应的图例模型'    
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
-
+    return {'sucessful':200}
 
 ''''
 并行坐标系的图例，能够展示各个数据相对于两外一组数据时的有关量
@@ -237,7 +240,7 @@ def excute_easy_Parallel(type):
                                          backgroundImageUrl= _rParams[' backgroundImageUrl']
                                         ))
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
-
+    return {'sucessful':200}
 
 '''饼状图'''
 @app.post("/easy/pie/<type>/")
@@ -326,7 +329,7 @@ def excute_easy_pie(type):
             _dataList.append(_dataMap)
         easyModelLegend = easy_pie.epie(title=_rParams['title']).double_pie(dataList=_dataList)
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
-
+    return {'sucessful':200}
 
 '''雷达图'''
 @app.post("/easy/radar/<type>/")
@@ -355,7 +358,7 @@ def excute_easy_radar(type):
                                          backgroundImageUrl= _rParams[' backgroundImageUrl']
                                         ))
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
-
+    return {'sucessful':200}
 
 '''桑基图'''
 @app.post("/easy/sankey/<type>/")
@@ -369,6 +372,7 @@ def excute_easy_sankey(type):
                                          backgroundImageUrl= _rParams[' backgroundImageUrl']
                                         ))
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
+    return {'sucessful':200}
 
 '''散点图'''
 @app.post("/easy/scatter/<type>/")
@@ -382,15 +386,27 @@ def excute_easy_scatter(type):
                           backgroundImageUrl = _rParams['backgroundImageUrl']
                           )._effectscatter()
     easyModelLegendToSaveImage(_rParams['water_marking'],easyModelLegend,_rParams['saveUrl']) 
+    return {'sucessful':200}
 
 '''表格图'''
 @app.post("/easy/table/<type>/")
 def excute_easy_table(type):
     _rDate =json.loads(request.get_data())
     easy_table.eMTable(_rDate['rowList'],_rDate['columnColor'],_rDate['outSaveUrl'])
-    
-
-
+    return {'sucessful':200}
+'''投射图'''
+@app.post("/easy/shoot/image/<type>/")
+def excute_easy_table(type):
+    _rDate =json.loads(request.get_data())
+    imageName = _rDate['imageName']
+    if(type =='scatter'):
+        inShoot = _rDate['inShoot']
+        noShoot = _rDate['noShoot']
+        easy_shoot._excutePlayerShootWriteImage(inShoot,noShoot,imageName)
+    elif(type =='hot'):
+        _shoot_list_ = _rDate['_shoot_list_']
+        easy_shoot.heatPowerImageWrite(_shoot_list_,imageName)
+    return {'sucessful':200}
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8889, debug=True)

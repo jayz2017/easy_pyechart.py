@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import easy_table, baseParams,set_water_marking,save_static_image,screen
 from pyecharts.render import make_snapshot
-from snapshot_pyppeteer   import snapshot
+from snapshot_phantomjs   import snapshot
 
 # headers = ["City name", "Area", "Population", "Annual Rainfall"]
 # rows = [

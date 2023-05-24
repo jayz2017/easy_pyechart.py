@@ -7,14 +7,12 @@ from pyecharts.charts import Page
 import random
 from pyecharts.options import ComponentTitleOpts
 from pyecharts.render import make_snapshot
-from snapshot_selenium import snapshot
+from snapshot_phantomjs import snapshot
 import os
-
-
+from pyecharts.globals import CurrentConfig
+CurrentConfig.ONLINE_HOST = "http://127.0.0.1:8000//"
 
 default_color_list=["#FFC125","#FF4040","#FF00FF","#C0FF3E","#9A32CD","#B03060","#48D1CC","#00EE00","#0000FF","#00F5FF","#228B22"]
-
-
 
 class baseParams():
     def __init__(
@@ -78,7 +76,7 @@ def _init_lengend(self):
         _initOpts = opts.InitOpts(
             bg_color={"type": "pattern", "image": JsCode("img"), "repeat": "no-repeat"})
     else:
-        _initOpts = opts.InitOpts(theme=self.opts['themeType'])
+        _initOpts = opts.InitOpts(theme=self.opts['themeType'],bg_color='#ffffff')
     c = (
         chart(init_opts=_initOpts)
     )
@@ -95,7 +93,8 @@ def _init_grid_lengend(self):
     chart = self.opts['lengend']
     c = (
         chart(init_opts=opts.InitOpts(
-            theme=self.opts['themeType'], width="1200px", height="800px"))
+            theme=self.opts['themeType'], width="1200px", height="800px")
+            ,bg_color="#ffffff")
     )
     return c
 
@@ -110,7 +109,7 @@ def _get_base_example(self):
         subtitle = ''
     lableList = self.opts['lableList']
     valueList = self.opts['valueList']
-    legendsOpts = self.opts['legendsOpts']
+    legendsOptsValue = self.opts['legendsOpts']
     isShowPercentage = self.opts['isShowPercentage']
     isStack = self.opts['isStack']
     backgroundImageUrl = self.opts['backgroundImageUrl']
@@ -120,7 +119,7 @@ def _get_base_example(self):
         return None
     if valueList == None or type(valueList) != list or len(valueList) < 1:
         return None
-    if legendsOpts == None or type(legendsOpts) != list or len(legendsOpts) < 1:
+    if legendsOptsValue == None or type(legendsOptsValue) != list or len(legendsOptsValue) < 1:
         return None
 
     c = _init_lengend(self)
@@ -128,10 +127,10 @@ def _get_base_example(self):
     for i in range(len(valueList)):
         # 是否堆叠
         if isStack == True:
-            c.add_yaxis(legendsOpts[i], valueList[i],
+            c.add_yaxis(legendsOptsValue[i], valueList[i],
                         stack="stack1", category_gap=_category_gap)
         else:
-            c.add_yaxis(legendsOpts[i], valueList[i],
+            c.add_yaxis(legendsOptsValue[i], valueList[i],
                         category_gap=_category_gap)
 
     if isShowPercentage != None and isShowPercentage == True:
@@ -281,7 +280,8 @@ def _funnel_base_config(self):
         itemstyle_opts=opts.ItemStyleOpts(border_color="#fff", border_width=1),
     )
     c.set_global_opts(title_opts=opts.TitleOpts(
-        title=title, subtitle=subtitle))
+        title=title, subtitle=subtitle),
+        )
     return c
 
 
@@ -462,7 +462,7 @@ def gradientLine_base_config(self):
             symbol_size=6,
             linestyle_opts=opts.LineStyleOpts(color="#fff"),
             label_opts=opts.LabelOpts(
-                is_show=True, position="top", color="white"),
+                is_show=True, position="top", color="#ffffff"),
             itemstyle_opts=opts.ItemStyleOpts(
                 color="red", border_color="#fff", border_width=3
             ),
@@ -510,7 +510,6 @@ def gradientLine_base_config(self):
                 is_show=True, linestyle_opts=opts.LineStyleOpts(color="#ffffff1f")
             ),
         ),
-        legend_opts=opts.LegendOpts(is_show=False),
     )
     return c
 
@@ -531,7 +530,8 @@ def liquid_base_config(self):
         )
     c.add("lq", self.opts['yList'], label_opts=label_opts)
     c.set_global_opts(title_opts=opts.TitleOpts(
-        title=self.opts['title'], subtitle=self.opts['subTitle']))
+        title=self.opts['title'], subtitle=self.opts['subTitle']),
+        )
     return c
 
 
@@ -574,7 +574,8 @@ def parallel_base_config(self):
               linestyle_opts=opts.LineStyleOpts(width=self.opts['lineStyleWidth']))
 
     c.set_global_opts(title_opts=opts.TitleOpts(
-        title=self.opts['title'], subtitle=self.opts['subTitle']))
+        title=self.opts['title'], subtitle=self.opts['subTitle']),
+        )
     return c
 
 '''饼状图基本配置'''
@@ -876,8 +877,7 @@ def _page_layout_base_config(self):
 
 #保存为图片
 def save_static_image(tagertLengend,tagertPath):
-    try:
+    #try:
         make_snapshot(snapshot, tagertLengend.render(), tagertPath)
-    except:
-        print("保存图片失败")    
-    os.remove(tagertLengend.render())
+    #int("保存图片失败")    
+        os.remove(tagertLengend.render())

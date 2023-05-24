@@ -394,9 +394,10 @@ def excute_easy_table(type):
     _rDate =json.loads(request.get_data())
     easy_table.eMTable(_rDate['rowList'],_rDate['columnColor'],_rDate['outSaveUrl'])
     return {'sucessful':200}
+
 '''投射图'''
 @app.post("/easy/shoot/image/<type>/")
-def excute_easy_table(type):
+def excute_easy_shootImage(type):
     _rDate =json.loads(request.get_data())
     imageName = _rDate['imageName']
     if(type =='scatter'):

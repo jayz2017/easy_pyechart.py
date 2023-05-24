@@ -3,7 +3,7 @@ from pyecharts.charts import Line
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from easy_pyechart import baseParams,easy_line
+from easy_pyechart import baseParams,easy_line,save_static_image
 
 def baseLine():
     _base=baseParams(title= '未来天气图')
@@ -75,9 +75,9 @@ def upDownLine():
             "value":[3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7],
             }
     ]
-    easy_line.eLine(lableList=xList,valueList=yList,areastyleOpt=True,isSmooth=True).up_down_x_line(baseParams(title= '降水图'),extraXlist=extra_xList).render("multiple_x_axes.html")
-
-
+    ee =easy_line.eLine(lableList=xList,valueList=yList,areastyleOpt=True,isSmooth=True).up_down_x_line(baseParams(title= '降水图'),extraXlist=extra_xList)
+    #.render("multiple_x_axes.html")
+    save_static_image(ee,"out.jpeg")
 #upDownLine()
 
 #渐变色的图例测试
@@ -89,9 +89,8 @@ def test_gradientLine():
             "value":[393, 438, 485, 631, 689, 824, 987, 1000, 1100, 1200]
             }
     ]
-    easy_line.eLine(lableList=x_data,valueList=yList).gradientLine(baseParams(title= '降水图')).render("line_color_with_js_func.html")
-
-test_gradientLine()
-
+    ee = easy_line.eLine(lableList=x_data,valueList=yList).gradientLine(baseParams(title= '降水图'))
+    #save_static_image(ee,"out1.png")
+    #ee.render("line_color_with_js_func.html")
 
 

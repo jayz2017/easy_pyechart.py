@@ -104,6 +104,6 @@ def double_pie():
                 }
                 ]
         f= easy_pie.epie(title='243244334',radius=40).double_pie(dataList=_dataList)
-        f.render("customized_pie.html")
-        #f.render(path='customized_pie.png',pixel_ratio=5)
+        #f.render("customized_pie.html")
+        f.render(path='customized_pie.png',pixel_ratio=5)
 #double_pie()

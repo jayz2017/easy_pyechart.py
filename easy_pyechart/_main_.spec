@@ -6,9 +6,9 @@ block_cipher = None
 
 a = Analysis(
     ['_main_.py'],
-    pathex=['C:\\Users\\haochenhu\\Documents\\easy_pyechart.py\\easy_pyechart'],
+    pathex=['D:\\plg_resource\\easy_pyechart.py\\easy_pyechart'],
     binaries=[],
-    datas=[('C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\Lib\\site-packages\\*.*', '.'),
+    datas=[('D:\\python3\\Lib\\site-packages\\*.*', '.'),
 	('.\\datasets\\*','.')],
     hiddenimports=[],
     hookspath=[],

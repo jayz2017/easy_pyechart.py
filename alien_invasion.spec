@@ -3,26 +3,41 @@
 
 block_cipher = None
 
+python_location_path='D:\\python3\\'
+python_file_path='D:\\plg_resource\\'
 
+main_path = python_file_path+'easy_pyechart.py\\easy_pyechart\\_main_.py'
+L1=	python_file_path+'easy_pyechart.py\\easy_pyechart'
+L2=python_location_path+'DLLs'
+L3=	python_location_path+'lib'
+L4=python_location_path
+L5=python_location_path+'site-packages'
+L6=python_location_path+'site-packages\\win32'
+L7=python_location_path+'site-packages\\win32\\lib' 
+L8=	python_location_path+'site-packages\\Pythonwin'
+L9=	python_location_path+'lib\\site-packages'
+L10=python_location_path+'Lib\\site-packages\\pyecharts'
+L11=python_location_path+'Lib\\site-packages\\pyecharts-2.0.0.dist-info'
+L12=python_file_path+'easy_pyechart.py' 
+#datas_path = python_location_path+'Lib\\site-packages\\*.*;pyecharts'
 a = Analysis(
-    ['C:\\Users\\haochenhu\\Documents\\easy_pyechart.py\\easy_pyechart\\_main_.py'],
+    [main_path],
     pathex=[
-		'c:\\Users\\haochenhu\\Documents\\easy_pyechart.py\\easy_pyechart',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\python37.zip',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\DLLs', 
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\lib',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37', 
-		'C:\\Users\\haochenhu\\AppData\\Roaming\\Python\\Python37\\site-packages',
-		'C:\\Users\\haochenhu\\AppData\\Roaming\\Python\\Python37\\site-packages\\win32',
-		'C:\\Users\\haochenhu\\AppData\\Roaming\\Python\\Python37\\site-packages\\win32\\lib', 
-		'C:\\Users\\haochenhu\\AppData\\Roaming\\Python\\Python37\\site-packages\\Pythonwin',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\lib\\site-packages',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\Lib\\site-packages\\pyecharts',
-		'C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\Lib\\site-packages\\pyecharts-2.0.0.dist-info',
-		'c:\\Users\\haochenhu\\Documents\\easy_pyechart.py'
+		L1,
+		L2, 
+		L3,
+		L4, 
+		L5,
+		L6,
+		L7, 
+		L8,
+		L9,
+		L10,
+		L11,
+		L12
 	],
     binaries=[],
-    datas=['C:\\Users\\haochenhu\\AppData\\Local\\Programs\\Python\\Python37\\Lib\\site-packages\\*.*;pyecharts'],
+    datas=[('D:\\python3\\Lib\\site-packages\\*.*', '.\\')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

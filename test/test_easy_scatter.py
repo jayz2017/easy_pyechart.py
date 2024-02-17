@@ -6,4 +6,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import easy_scatter
 
-easy_scatter.eScatter(title='ss',lableList=Faker.choose(),valueList=Faker.values())._effectscatter().render("effectscatter_splitline.html")
+_f=[]
+_f.append(Faker.values())
+_f.append(Faker.values())
+easy_scatter.eScatter(title='ss',lableList=Faker.choose(),valueList=_f)._effectscatter().render("effectscatter_splitline.html")

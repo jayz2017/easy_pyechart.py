@@ -15,7 +15,7 @@ links = [
     {"source": "category1", "target": "category2", "value": 10},
     {"source": "category2", "target": "category3", "value": 15},
     {"source": "category3", "target": "category4", "value": 20},
-    {"source": "category5", "target": "category6", "value": 25},
+    {"source": "category5", "target": "category6", "value": 10},
 ]
 
 easy_sankey.eSankey(seriesName='LAIJ',lableList=nodes,valueList=links).sankey_base(baseParams(title='测试')).render("sankey_base.html")

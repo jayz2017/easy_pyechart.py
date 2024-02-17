@@ -21,7 +21,7 @@ def base_pie():
     easy_pie.epie(title='测试一把', sourceList=source,
                   layOutCenter=layOutCenter).dataset_pie().render("dataset_pie.html")
 
-
+base_pie()
 def double_pie():
         x_data = ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"]
         y_data = [335, 310, 274, 235, 400]
@@ -104,6 +104,6 @@ def double_pie():
                 }
                 ]
         f= easy_pie.epie(title='243244334',radius=40).double_pie(dataList=_dataList)
-        #f.render("customized_pie.html")
-        f.render(path='customized_pie.png',pixel_ratio=5)
+        f.render("customized_pie.html")
+        #f.render(path='customized_pie.png',pixel_ratio=5)
 #double_pie()

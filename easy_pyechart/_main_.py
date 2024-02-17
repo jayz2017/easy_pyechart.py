@@ -5,7 +5,7 @@ from easy_pyechart import easy_Bar, easy_funnel, easy_gauge,easy_graph,easy_line
 from flask import Flask, request
 import json
 app = Flask(__name__)
-
+import pyecharts.options as opts
 '''主要针对的是使用baseParams作为基本参数获取的图例模型'''
 def packBaseParams(params):
     values = {}
@@ -84,7 +84,7 @@ def excute_easy_Bar(type):
     _getValue = packParams(params)
     if (type(_getValue) == str):
         return _getValue
-    easyModel = easy_Bar.Bar(title=_getValue['title'], subTitle=_getValue['subTitle'], lableList=_getValue['lableList'],
+    easyModel = easy_Bar.eBar(title=_getValue['title'], subTitle=_getValue['subTitle'], lableList=_getValue['lableList'],
                              valueList=_getValue['valueList'], legendsOpts=_getValue['legendsOpts'], backgroundImageUrl=_getValue['backgroundImageUrl'])
 
     if (type == 'bar'):
@@ -160,6 +160,21 @@ def excute_easy_Line(type):
     _rDate =json.loads(request.get_data())
     lableList = _rDate['lableList']
     valueList = _rDate['valueList']
+    if(type =='basicLine'):
+        for i in range(len(valueList)):
+            if(i==0):
+                valueList[i]['setMarkPoint']=[
+                        opts.MarkPointItem(type_="max", name="最大值"),
+                        opts.MarkPointItem(type_="min", name="最小值"),
+                    ]
+                valueList[i]['setMarkLine']=[opts.MarkLineItem(type_="average", name="平均值")]
+            else:
+                valueList[i]['setMarkPoint']=[opts.MarkPointItem(value=min(valueList[i]['value']), name="周最低", x=1, y=-1.5)]   
+                valueList[i]['setMarkLine']=[
+                    opts.MarkLineItem(type_="average", name="平均值"),
+                    opts.MarkLineItem(symbol="none", x="90%", y="max"),
+                    opts.MarkLineItem(symbol="circle", type_="max", name="最高点"),
+                ]
     try:
         subTitle = _rDate['subTitle']
     except:

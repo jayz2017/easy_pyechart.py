@@ -14,26 +14,40 @@ def baseLine():
     {
     "name":"最高气温",
     "value":high_temperature,
-    "setMarkPoint":[
-                    opts.MarkPointItem(type_="max", name="最大值"),
-                    opts.MarkPointItem(type_="min", name="最小值"),
-                ],
-    "setMarkLine":[opts.MarkLineItem(type_="average", name="平均值")],
+    # "setMarkPoint":[
+    #                 opts.MarkPointItem(type_="max", name="最大值"),
+    #                 opts.MarkPointItem(type_="min", name="最小值"),
+    #             ],
+    # "setMarkLine":[opts.MarkLineItem(type_="average", name="平均值")],
     },{
     "name":"最低气温",
     "value":low_temperature,
-    "setMarkPoint":[opts.MarkPointItem(value=-2, name="周最低", x=1, y=-1.5)],
-    "setMarkLine":[
+    # "setMarkPoint":[opts.MarkPointItem(value=-2, name="周最低", x=1, y=-1.5)],
+    # "setMarkLine":[
+    #                 opts.MarkLineItem(type_="average", name="平均值"),
+    #                 opts.MarkLineItem(symbol="none", x="90%", y="max"),
+    #                 opts.MarkLineItem(symbol="circle", type_="max", name="最高点"),
+    #             ],
+    }
+    ]
+    for i in range(len(_valueList)):
+            if(i==0):
+                _valueList[i]['setMarkPoint']=[
+                        opts.MarkPointItem(type_="max", name="最大值"),
+                        opts.MarkPointItem(type_="min", name="最小值"),
+                    ]
+                _valueList[i]['setMarkLine']=[opts.MarkLineItem(type_="average", name="平均值")]
+            else:
+                _valueList[i]['setMarkPoint']=[opts.MarkPointItem(value=min(_valueList[i]['value']), name="周最低", x=1, y=-1.5)]   
+                _valueList[i]['setMarkLine']=[
                     opts.MarkLineItem(type_="average", name="平均值"),
                     opts.MarkLineItem(symbol="none", x="90%", y="max"),
                     opts.MarkLineItem(symbol="circle", type_="max", name="最高点"),
-                ],
-    }
-    ]
+                ]
 
     easy_line.eLine(lableList=week_name_list,valueList=_valueList,areastyleOpt=True,isSmooth=True).basicLine(_base).render("temperature_change_line_chart.html")
 
-
+#baseLine()
 
 def upDownLine():
     #第一个x轴的数据集合
@@ -75,9 +89,8 @@ def upDownLine():
             "value":[3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7],
             }
     ]
-    ee =easy_line.eLine(lableList=xList,valueList=yList,areastyleOpt=True,isSmooth=True).up_down_x_line(baseParams(title= '降水图'),extraXlist=extra_xList)
-    #.render("multiple_x_axes.html")
-    save_static_image(ee,"out.jpeg")
+    ee =easy_line.eLine(lableList=xList,valueList=yList,areastyleOpt=True,isSmooth=True).up_down_x_line(baseParams(title= '降水图'),extraXlist=extra_xList).render("multiple_x_axes.html")
+    #save_static_image(ee,"out.jpeg")
 #upDownLine()
 
 #渐变色的图例测试
@@ -87,10 +100,13 @@ def test_gradientLine():
             {
             "name":"注册总量",
             "value":[393, 438, 485, 631, 689, 824, 987, 1000, 1100, 1200]
+            }, {
+            "name":"注册x量",
+            "value":[293, 138, 483, 331, 689, 224, 57, 700, 900, 1300]
             }
     ]
     ee = easy_line.eLine(lableList=x_data,valueList=yList).gradientLine(baseParams(title= '降水图'))
     #save_static_image(ee,"out1.png")
-    #ee.render("line_color_with_js_func.html")
+    ee.render("line_color_with_js_func.html")
 
-
+test_gradientLine()

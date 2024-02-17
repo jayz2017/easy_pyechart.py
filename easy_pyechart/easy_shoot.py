@@ -3,7 +3,7 @@ from matplotlib.patches import Arc, Circle, Rectangle
 import pandas as pd
 import seaborn as sns
 import matplotlib as mpl
-
+import os
 #投篮球场散点图存储基本地址
 baseGenImageUrl ='C:\\testimage\\{name}'
 

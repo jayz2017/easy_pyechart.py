@@ -20,10 +20,12 @@ def _test_eBar():
             {"value": 52, "percent": 52 / (3 + 52)},
             {"value": 43, "percent": 43 / (33 + 43)},
         ])
-    _p=easy_Bar.eBar(title='这个是图',lableList=[1, 2, 3, 4, 5],valueList=_value_list_,legendsOpts=['product1','product2'],backgroundImageUrl=r'C:\Users\chenhao\Desktop\客户调休回复邮件报告.png')._stack_bar_percent()
+    _p=easy_Bar.eBar(title='这个是图',lableList=[1, 2, 3, 4, 5],valueList=_value_list_,legendsOpts=['product1','product2']
+                    # ,backgroundImageUrl=r'C:\Users\chenhao\Desktop\客户调休回复邮件报告.png'
+                     )._stack_bar_percent()
     _p.render("stack_bar_percent.html")
 
-_test_eBar()
+#_test_eBar()
 
 def _test_bar_line():
     _lableList=["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
@@ -32,10 +34,11 @@ def _test_bar_line():
     _value_list_.append([2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3])
     _extra_value_=[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
     _p=easy_Bar.eBar(title='这个是图',lableList=_lableList,valueList=_value_list_,legendsOpts=['蒸发量','降水量'])._mixed_bar_and_line(extraYname='温度',extraYList=_extra_value_,extraLegendName='平均温度')
-    _p.set_global_opts(graphic_opts=set_water_marking('牛逼class'))
+    _p.set_global_opts(graphic_opts=set_water_marking('牛逼2121class'))
     _p.render("mixed_bar_and_line.html")
-    #save_static_image(_p,"221.png")
-#_test_bar_line()
+    save_static_image(_p,"221.png")
+    
+_test_bar_line()
 
 
 

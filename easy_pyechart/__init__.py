@@ -249,7 +249,8 @@ def scatter_base_config(self):
     _symbolType = self.opts['symbolType']
     c = _init_lengend(self)
     c.add_xaxis(xList)
-    c.add_yaxis("", yList, symbol=_symbolType)
+    for i in range(len(yList)):
+        c.add_yaxis("", yList[i], symbol=_symbolType )
     c.set_global_opts(
         title_opts=opts.TitleOpts(title=title, subtitle=subtitle),
         xaxis_opts=opts.AxisOpts(
@@ -319,6 +320,7 @@ def _graph_base_config(self):
     _links = self.opts['links']
     _categories = self.opts['categories']
     c = _init_lengend(self)
+ 
     c.add(
         "",
         nodes=_nodes,
@@ -331,7 +333,7 @@ def _graph_base_config(self):
     )
     c.set_global_opts(
         title_opts=opts.TitleOpts(
-            title=self.opts['title'], subtitle=self.opts['subtitle']),
+            title=self.opts['title'], subtitle=self.opts['subTitle']),
         legend_opts=opts.LegendOpts(
             orient="vertical", pos_left="2%", pos_top="20%"),
     )
@@ -344,7 +346,7 @@ def _graph_base_config(self):
 def line_base_config(self):
     c = _init_lengend(self)
     _xaxis = None
-    if self.opts['_xaxis'] != None:
+    if  '_xaxis' in self.opts.keys() and self.opts['_xaxis'] != None:
         _xaxis = self.opts['_xaxis']
     try:
         c.add_xaxis(self.opts['xList'], xaxis=_xaxis)
@@ -463,9 +465,9 @@ def gradientLine_base_config(self):
             linestyle_opts=opts.LineStyleOpts(color="#fff"),
             label_opts=opts.LabelOpts(
                 is_show=True, position="top", color="#ffffff"),
-            itemstyle_opts=opts.ItemStyleOpts(
-                color="red", border_color="#fff", border_width=3
-            ),
+            # itemstyle_opts=opts.ItemStyleOpts(
+            #     color="red", border_color="#fff", border_width=3
+            # ),
             tooltip_opts=opts.TooltipOpts(is_show=False),
             areastyle_opts=opts.AreaStyleOpts(
                 color=JsCode(area_color_js), opacity=1),
@@ -528,10 +530,12 @@ def liquid_base_config(self):
             ),
             position="inside",
         )
-    c.add("lq", self.opts['yList'], label_opts=label_opts)
-    c.set_global_opts(title_opts=opts.TitleOpts(
-        title=self.opts['title'], subtitle=self.opts['subTitle']),
-        )
+    c.add("Liquid", self.opts['yList']
+          #, label_opts=label_opts
+          )
+    # c.set_global_opts(title_opts=opts.TitleOpts(
+    #     title=self.opts['title'], subtitle=self.opts['subTitle']),
+    #     )
     return c
 
 
@@ -649,9 +653,14 @@ def radar_base_config(self):
     c = _init_lengend(self)
     _schema=[]
     for i in self.opts['lableList']:
-        _schema.append(
-            opts.RadarIndicatorItem(name=i["name"], max_=i["value"])
-        )
+        try:
+            _schema.append(
+                opts.RadarIndicatorItem(name=i["name"], max_=i["max"])
+            )
+        except:
+            _schema.append(
+                opts.RadarIndicatorItem(name=i["name"], max_=i["value"])
+            )   
     _color =random.sample(default_color_list, len(self.opts['valueList']))
     c.add_schema(   schema = _schema,
                     splitarea_opt=opts.SplitAreaOpts(is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1)  ),
@@ -696,7 +705,8 @@ def round_radar_base_config(self):
             max_=4,
             interval=2,
             splitarea_opts=opts.SplitAreaOpts(
-                is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1)
+                is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1,color='rgba(255, 255, 255, 0.5)'
+                )
             ),
         ),
         polar_opts=opts.PolarOpts(),
@@ -706,7 +716,20 @@ def round_radar_base_config(self):
     c.add(
         series_name=self.opts['valueList'][0]['name'],
         data=self.opts['valueList'],
-        areastyle_opts=opts.AreaStyleOpts(opacity=0.1),
+        areastyle_opts=opts.AreaStyleOpts(opacity=0.8,color=JsCode(
+                    """ new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+                            {
+                                color: '#B8D3E4',
+                                offset: 0
+                            },
+                            {
+                                color: '#72ACD1',
+                                offset: 1
+                            }
+                        ])
+                        """
+                )
+                ),
         linestyle_opts=opts.LineStyleOpts(width=1),
     )
     c.set_series_opts(label_opts=opts.LabelOpts(is_show=True))
@@ -878,6 +901,6 @@ def _page_layout_base_config(self):
 #保存为图片
 def save_static_image(tagertLengend,tagertPath):
     #try:
-        make_snapshot(snapshot, tagertLengend.render(), tagertPath)
+        make_snapshot(snapshot, tagertLengend.render(), tagertPath,is_remove_html=True)
     #int("保存图片失败")    
         os.remove(tagertLengend.render())

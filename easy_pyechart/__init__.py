@@ -9,6 +9,10 @@ from pyecharts.options import ComponentTitleOpts
 from pyecharts.render import make_snapshot
 from snapshot_phantomjs import snapshot
 import os
+import pandas as pd
+from plottable import Table,ColumnDefinition
+import matplotlib.pyplot as plt
+
 from pyecharts.globals import CurrentConfig
 CurrentConfig.ONLINE_HOST = "http://127.0.0.1:8000//"
 
@@ -904,3 +908,218 @@ def save_static_image(tagertLengend,tagertPath):
         make_snapshot(snapshot, tagertLengend.render(), tagertPath,is_remove_html=True)
     #int("保存图片失败")    
         os.remove(tagertLengend.render())
+
+def table_base_config(self,lineSplit):
+    page_wight = self.opts["page_wight"]
+    page_hight = self.opts["page_hight"]
+    columns = self.opts["columns"]
+    _data = self.opts["_data"]
+    head_colors = self.opts["head_colors"]
+    head_width = self.opts["head_width"]
+    the_row_color = self.opts["the_row_color"]
+    line_comp_ratio = self.opts["line_comp_ratio"]
+
+    the_row_font_size = self.opts["the_row_font_size"]
+    the_column_font_size = self.opts["the_column_font_size"]
+    the_column_font_color = self.opts["the_column_font_color"]
+
+    ncols, nrows = len(columns), len(_data)
+    column_definitions_list=[]
+    for i in range(len(columns)):
+        _dd_width = head_width.get(i,None)
+        if i==0:
+            column_definitions_list.append(ColumnDefinition(
+                name=columns[i],
+                title="",
+                textprops={"ha": "left"},
+                width=_dd_width if _dd_width is not None else 0.35
+                #plot_fn=circled_image,
+            ))
+            #设置列边框的分割线
+        elif lineSplit!=None and i in lineSplit :
+            column_definitions_list.append(ColumnDefinition(
+                name=columns[i],
+                title="",
+                textprops={"ha": "center"},
+                width=_dd_width if _dd_width is not None else 0.2,
+                border="l"
+            ))
+        else:
+            column_definitions_list.append(ColumnDefinition(
+                name=columns[i],
+                title="",
+                textprops={"ha": "center"},
+                width=_dd_width if _dd_width is not None else 0.2,
+                #plot_fn=circled_image,
+            ))
+
+    d = pd.DataFrame(_data
+                , columns=columns
+                 ).round(0)
+    
+    fig, ax = plt.subplots(figsize=(page_wight/100, page_hight/100))
+    
+    tab = Table(d, 
+                row_dividers=False, 
+               # odd_row_color="#f0f0f0", 
+                #even_row_color="#e0f6ff",
+                index_col= columns[0]
+                ,column_definitions=column_definitions_list,
+                # row_divider_kw={"linewidth": 1, 
+                #                 #"linestyle": (3, (1, 5))
+                #                 },
+                )    
+    #设置行颜色
+    for i in range(nrows):
+        _rowColor =the_row_color.get(str(i),None)
+        if i ==0:
+            tab.rows[0].set_facecolor("#4F5F78")
+        elif str(i) in the_row_color.keys():
+            tab.rows[i].set_facecolor(_rowColor)     
+        elif i%2==0:
+            tab.rows[i].set_facecolor("#FFFFFF")  
+        elif i%2!=0:
+            tab.rows[i].set_facecolor("#F2F2F2")  
+
+
+    for i in  head_colors.keys():      
+        #设置表格列颜色
+        col =tab.columns.get(i,None)
+        if col !=None : 
+            tab.columns[i].set_facecolor(head_colors[i])
+
+    for i in  the_row_font_size.keys():      
+        #设置表格列字体大小
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontsize(the_row_font_size[i])
+
+    for i in  the_column_font_size.keys():      
+        #设置表格列字体大小
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontsize(the_column_font_size[i])
+
+    for i in  the_column_font_color.keys():      
+        #设置表格列字体大小
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontcolor(the_column_font_color[i])
+    fig.subplots_adjust(top=0.95)        
+    return  fig
+
+
+def double_head_config(self,groupHeader,lineSplit):
+    page_wight = self.opts["page_wight"]
+    page_hight = self.opts["page_hight"]
+    columns = self.opts["columns"]
+    _data = self.opts["_data"]
+    head_colors = self.opts["head_colors"]
+    head_width = self.opts["head_width"]
+    the_row_color = self.opts["the_row_color"]
+    line_comp_ratio = self.opts["line_comp_ratio"]
+
+    the_row_font_size = self.opts["the_row_font_size"]
+    the_column_font_size = self.opts["the_column_font_size"]
+    the_column_font_color = self.opts["the_column_font_color"]
+
+    ncols, nrows = len(columns), len(_data)
+    column_definitions_list=[]
+    for i in range(len(columns)):
+        _dd_width = head_width.get(str(i),None)
+        #获取列的组名称，列融合的方式
+        group_name=None    
+        if  groupHeader is not None :  
+            for f in groupHeader.keys():
+                if str(i) in f.split(','):
+                    group_name= groupHeader[f]
+                    break
+        border_wight=None       
+            #设置列边框的分割线
+        if lineSplit!=None and i in lineSplit :
+            border_wight="l"
+        _atitle =columns[i] if columns[i]!=' ' else '1',
+        _atitle_str= str(_atitle[0])
+        _atitle_str_r =' ' if _atitle_str.find('InvalidIdentifier')>-1  else _atitle_str,
+        _atitle_str= str(_atitle_str_r[0])
+        at_index = _atitle_str.find('@')
+        if at_index>-1:
+            _atitle_str= _atitle_str[:at_index]
+        if i==1:
+            column_definitions_list.append(ColumnDefinition(
+                name=columns[i],
+                title=_atitle_str,
+                textprops={"ha": "center"},
+                width=_dd_width if _dd_width is not None else 0.35,
+                group=group_name if group_name is not None else ' ',
+                border=border_wight
+            ))
+        else:
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={"ha": "center"},
+                width=_dd_width if _dd_width is not None else 0.2,
+                group = group_name if group_name is not None else ' ',
+                border=border_wight
+            ))
+
+    d = pd.DataFrame(_data
+                , columns=columns
+                 ).round(0)
+    
+    fig, ax = plt.subplots(figsize=(page_wight/100, page_hight/100))
+    
+    tab = Table(d, 
+                row_dividers=False
+               , index_col= columns[0]
+                ,column_definitions=column_definitions_list,
+                )    
+    #设置行颜色
+    for i in range(nrows):
+        _rowColor =the_row_color.get(str(i),None)
+        if i ==0:
+            tab.rows[0].set_facecolor("#4F5F78")
+        elif str(i) in the_row_color.keys():
+            tab.rows[i].set_facecolor(_rowColor)     
+
+    for i in  head_colors.keys():      
+        #设置表格列颜色
+        col =tab.columns.get(i,None)
+        if col !=None : 
+            tab.columns[i].set_facecolor(head_colors[i])
+
+    for i in  the_row_font_size.keys():      
+        #设置表格列字体大小
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontsize(the_row_font_size[i])
+
+    for i in  the_column_font_size.keys():      
+        #设置表格列字体大小
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontsize(the_column_font_size[i])
+
+    for i in  the_column_font_color.keys():      
+        #设置表格列字体颜色
+        col =tab.rows.get(i,None)
+        if col !=None : 
+            tab.rows[i].set_fontcolor(the_column_font_color[i])
+    fig.subplots_adjust(top=0.95)
+    return  fig    
+
+
+# #保存为图片
+# def save_static_image(tagertLengend,tagertPath):
+#     try:
+#         make_snapshot(snapshot, tagertLengend.render(), tagertPath
+#                       ,is_remove_html=True
+#                       )
+    
+#         #print("截取完图片的时间："+ str(time.time()))
+#         return  tagertPath
+#     except Exception as e:
+#         print("保存图片失败",e)    
+#         os.remove(tagertLengend.render())
+                

@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from easy_pyechart import easy_Bar, easy_funnel, easy_gauge,easy_graph,easy_line,easy_liquid, easy_parallel,easy_pie,easy_radar,easy_sankey,easy_scatter,easy_table,easy_treeMap,easy_shoot,set_water_marking, save_static_image,baseParams
+from easy_pyechart import easy_Bar, easy_funnel, easy_gauge,easy_graph,easy_line,easy_liquid, easy_parallel,easy_pie,easy_radar,easy_sankey,easy_scatter,easy_table,easy_treeMap,easy_shoot,set_water_marking, save_static_image,baseParams,table
 from flask import Flask, request
 import json
 app = Flask(__name__)
@@ -423,6 +423,76 @@ def excute_easy_shootImage(type):
         _shoot_list_ = _rDate['_shoot_list_']
         easy_shoot.heatPowerImageWrite(_shoot_list_,imageName)
     return {'sucessful':200}
+
+@app.post("/easycharts/gen/table/")
+def genTable():
+    _r=json.loads(request.get_data()) 
+    _image_save_link=_r['imageSaveLink']     
+    _type = _r['type']
+    if(_type == 'base'):
+        _c=table.table(
+                    the_row_color=_r.get('theRowColor',{}),
+                    columns=_r['columns'],
+                    _data=_r['data'],
+                    head_colors= _r.get('headColors',{}),
+                    line_comp_ratio=_r.get('lineCompRatio',3),
+                    head_width=_r.get('headWidth',{}),
+                    the_column_font_color=_r.get('theColumnFontColor',{}),
+                    the_column_font_size=_r.get('theColumnFontSize',{}),
+                    the_row_font_size=_r.get('theRowFontSize',{}),
+                    page_wight=_r.get('pageWight',None),
+                    page_hight=_r.get('pageHight',None),
+                  ).base_table()
+        
+        _c.savefig(_image_save_link, 
+            bbox_inches='tight', 
+            pad_inches=0,dpi=800)
+        return _image_save_link
+    
+    elif(_type=='lineSplit'):
+                _c=table.table(
+                    the_row_color=_r.get('theRowColor',{}),
+                    columns=_r['columns'],
+                    _data=_r['data'],
+                    head_colors= _r.get('headColors',{}),
+                    line_comp_ratio=_r.get('lineCompRatio',3),
+                    head_width=_r.get('headWidth',{}),
+                    the_column_font_color=_r.get('theColumnFontColor',{}),
+                    the_column_font_size=_r.get('theColumnFontSize',{}),
+                    the_row_font_size=_r.get('theRowFontSize',{}),
+                    page_wight=_r.get('pageWight',None),
+                    page_hight=_r.get('pageHight',None),
+                  ).table_col_split(lineSplit=_r.get('lineSplit',None))
+                _c.savefig(_image_save_link, 
+                        bbox_inches='tight', 
+                        pad_inches=0,dpi=800)
+                return _image_save_link
+    elif (_type=='double'):
+                _c=table.table(
+                    the_row_color=_r.get('theRowColor',{}),
+                    columns=_r['columns'],
+                    _data=_r['data'],
+                    head_colors= _r.get('headColors',{}),
+                    line_comp_ratio=_r.get('lineCompRatio',3),
+                    head_width=_r.get('headWidth',{}),
+                    the_column_font_color=_r.get('theColumnFontColor',{}),
+                    the_column_font_size=_r.get('theColumnFontSize',{}),
+                    the_row_font_size=_r.get('theRowFontSize',{}),
+                    page_wight=_r.get('pageWight',None),
+                    page_hight=_r.get('pageHight',None),
+                  ).double_head_table(groupHeader=_r['groupHeader'],lineSplit=_r.get('lineSplit',None))
+                
+                _c.savefig(_image_save_link, 
+                        bbox_inches='tight', 
+                        pad_inches=0,dpi=800)
+                return _image_save_link
+
+    else:
+        return 'The legend type is incorrect, please check!'     
+
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8889, debug=True)

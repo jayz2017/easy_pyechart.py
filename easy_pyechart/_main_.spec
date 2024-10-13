@@ -9,7 +9,7 @@ a = Analysis(
     pathex=['D:\\plg_resource\\easy_pyechart.py\\easy_pyechart'],
     binaries=[],
     datas=[('D:\\python3\\Lib\\site-packages\\*.*', '.'),
-	('.\\datasets\\*','.')],
+	('.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

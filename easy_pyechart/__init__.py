@@ -9,13 +9,20 @@ from pyecharts.options import ComponentTitleOpts
 from pyecharts.render import make_snapshot
 from snapshot_phantomjs import snapshot
 import os
-import pandas as pd
-from plottable import Table,ColumnDefinition
-import matplotlib.pyplot as plt
 
+from plottable import Table,ColumnDefinition
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+from plottable.formatters import decimal_to_percent
+from plottable.plots import bar, percentile_bars, percentile_stars, progress_donut
+from plottable.cmap import normed_cmap
+import matplotlib
 from pyecharts.globals import CurrentConfig
 CurrentConfig.ONLINE_HOST = "http://127.0.0.1:8000//"
-
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
+plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
 default_color_list=["#FFC125","#FF4040","#FF00FF","#C0FF3E","#9A32CD","#B03060","#48D1CC","#00EE00","#0000FF","#00F5FF","#228B22"]
 
 class baseParams():
@@ -955,10 +962,21 @@ def table_base_config(self,lineSplit):
 
     d = pd.DataFrame(_data
                 , columns=columns
-                 ).round(0)
+                 ).round(2)
     
     fig, ax = plt.subplots(figsize=(page_wight/100, page_hight/100))
-    
+       # 添加水印
+    if  self.opts["water_mark"]!=None:
+        ax.text(
+            0.5, 0.5, 'Sample Watermark',  # 文本内容
+            transform=ax.transAxes,  # 使用轴坐标系
+            fontsize=40,  # 字体大小
+            color='gray',  # 字体颜色
+            alpha=0.2,  # 透明度
+            ha='center',  # 水平对齐方式
+            va='center',  # 垂直对齐方式
+            rotation=30  # 文本旋转角度
+        )
     tab = Table(d, 
                 row_dividers=False, 
                # odd_row_color="#f0f0f0", 
@@ -1007,8 +1025,7 @@ def table_base_config(self,lineSplit):
             tab.rows[i].set_fontcolor(the_column_font_color[i])
     fig.subplots_adjust(top=0.95)        
     return  fig
-
-
+          
 def double_head_config(self,groupHeader,lineSplit):
     page_wight = self.opts["page_wight"]
     page_hight = self.opts["page_hight"]
@@ -1022,6 +1039,26 @@ def double_head_config(self,groupHeader,lineSplit):
     the_row_font_size = self.opts["the_row_font_size"]
     the_column_font_size = self.opts["the_column_font_size"]
     the_column_font_color = self.opts["the_column_font_color"]
+    the_auto_line_color= self.opts["the_auto_line_color"]
+    #指定圆圈形状的列
+    the_donut_col= self.opts["the_donut_col"]
+    #指定星星图案形状的列
+    the_stars_col= self.opts["the_stars_col"]
+    #指定进度条图案形状的列
+    the_bar_col= self.opts["the_bar_col"]
+    #指定条柱样式图形的列
+    the_bars_col= self.opts["the_bars_col"]
+
+    # 设置颜色
+    cmap = LinearSegmentedColormap.from_list(
+        name="bugw", colors=["#0ebeff", "#1db6fa", "#2caff6", "#3ba7f1", "#4a9fec","#5997e7","#6890e3"
+                             ,"#7788de","#8780d9","#8780d9","#a571d0","#b469cb","#c361c6","#d259c1","#e152bd","#f04ab8"
+                             ,"#ff42b3"
+                             ], N=256
+    )
+    d = pd.DataFrame(_data
+                , columns=columns
+                 ).round(2)
 
     ncols, nrows = len(columns), len(_data)
     column_definitions_list=[]
@@ -1051,43 +1088,136 @@ def double_head_config(self,groupHeader,lineSplit):
                 title=_atitle_str,
                 textprops={"ha": "center"},
                 width=_dd_width if _dd_width is not None else 0.35,
-                group=group_name if group_name is not None else ' ',
+                group=group_name if group_name is not None else None,
                 border=border_wight
             ))
-        else:
+        elif  columns[i] in the_auto_line_color:
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={
+                    "ha": "center",
+                    "bbox": {"boxstyle": "circle", "pad": 0.35},
+                },
+                width=_dd_width if _dd_width is not None else 0.2,
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+                cmap=normed_cmap(d[columns[i]], cmap=matplotlib.cm.PiYG_r, num_stds=2.5),
+            ))
+        elif columns[i] in the_donut_col:
+            #图案为圆形，用弧度显然数据
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={
+                    "ha": "center",
+                },
+                width=_dd_width if _dd_width is not None else 0.2,
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+                plot_fn=progress_donut, 
+                 plot_kw={
+                    "is_pct": True,
+                    "formatter": "{:.0%}"
+                },
+            ))
+        elif columns[i] in the_stars_col:
+            #图案为星星，用星的数量显然数据
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={
+                    "ha": "center",
+                },
+                width=1.5,
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+                plot_fn=percentile_stars, 
+                 plot_kw={
+                    "is_pct": True,
+                },
+            ))
+        elif columns[i] in the_bar_col:
+              #图案为圆形，用弧度显然数据
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={
+                    "ha": "center",
+                },
+                width=1.25,
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+                plot_fn=bar, 
+                plot_kw={
+                    "cmap": cmap,
+                    "plot_bg_bar": True,
+                    "annotate": True,
+                    "height": 0.5,
+                    "lw": 0.5,
+                    "formatter": decimal_to_percent,
+                },
+            ))
+        elif  columns[i] in the_bars_col:
+             #图案为竖线，用竖线的数量显然数据
+            column_definitions_list.append(ColumnDefinition(
+                name= columns[i],
+                title=_atitle_str,
+                textprops={
+                    "ha": "center",
+                },
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+                plot_fn=percentile_bars, 
+                 plot_kw={
+                    "is_pct": True,
+                },
+            ))
+        else :
             column_definitions_list.append(ColumnDefinition(
                 name= columns[i],
                 title=_atitle_str,
                 textprops={"ha": "center"},
                 width=_dd_width if _dd_width is not None else 0.2,
-                group = group_name if group_name is not None else ' ',
-                border=border_wight
-            ))
-
-    d = pd.DataFrame(_data
-                , columns=columns
-                 ).round(0)
-    
+                group = group_name if group_name is not None else None,
+                border=border_wight,
+            ))    
     fig, ax = plt.subplots(figsize=(page_wight/100, page_hight/100))
-    
+    # 添加水印
+    if  self.opts["water_mark"]!=None:
+        ax.text(
+            0.5, 0.5, 'Sample Watermark',  # 文本内容
+            transform=ax.transAxes,  # 使用轴坐标系
+            fontsize=40,  # 字体大小
+            color='gray',  # 字体颜色
+            alpha=0.2,  # 透明度
+            ha='center',  # 水平对齐方式
+            va='center',  # 垂直对齐方式
+            rotation=30  # 文本旋转角度
+        )
     tab = Table(d, 
-                row_dividers=False
-               , index_col= columns[0]
-                ,column_definitions=column_definitions_list,
-                )    
+                textprops={"ha": "center"},
+                index_col= columns[0],
+                column_definitions=column_definitions_list,
+                row_dividers=True,
+                footer_divider=True,
+                row_divider_kw={"linewidth": 1, "linestyle": (0, (1, 5))},
+                col_label_divider_kw={"linewidth": 1, "linestyle": "-"},
+                )
+    #设置列自动的渐变色趋势
+    if len(the_auto_line_color)>0:
+        tab.autoset_fontcolors(colnames=the_auto_line_color)
     #设置行颜色
-    for i in range(nrows):
-        _rowColor =the_row_color.get(str(i),None)
-        if i ==0:
-            tab.rows[0].set_facecolor("#4F5F78")
-        elif str(i) in the_row_color.keys():
-            tab.rows[i].set_facecolor(_rowColor)     
-
+    if len(the_auto_line_color)==0:
+        for i in range(nrows):
+            _rowColor =the_row_color.get(str(i),None)
+            tab.rows[i].set_facecolor(_rowColor) 
+    
     for i in  head_colors.keys():      
-        #设置表格列颜色
-        col =tab.columns.get(i,None)
-        if col !=None : 
-            tab.columns[i].set_facecolor(head_colors[i])
+            #设置表格列颜色
+            col =tab.columns.get(i,None)
+            if col !=None : 
+                tab.columns[i].set_facecolor(head_colors[i])
 
     for i in  the_row_font_size.keys():      
         #设置表格列字体大小
@@ -1106,7 +1236,7 @@ def double_head_config(self,groupHeader,lineSplit):
         col =tab.rows.get(i,None)
         if col !=None : 
             tab.rows[i].set_fontcolor(the_column_font_color[i])
-    fig.subplots_adjust(top=0.95)
+    fig.subplots_adjust()
     return  fig    
 
 
@@ -1122,4 +1252,3 @@ def double_head_config(self,groupHeader,lineSplit):
 #     except Exception as e:
 #         print("保存图片失败",e)    
 #         os.remove(tagertLengend.render())
-                

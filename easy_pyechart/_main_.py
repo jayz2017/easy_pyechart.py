@@ -442,6 +442,7 @@ def genTable():
                     the_row_font_size=_r.get('theRowFontSize',{}),
                     page_wight=_r.get('pageWight',None),
                     page_hight=_r.get('pageHight',None),
+                     water_mark=_r.get('water_mark',None),
                   ).base_table()
         
         _c.savefig(_image_save_link, 
@@ -462,6 +463,7 @@ def genTable():
                     the_row_font_size=_r.get('theRowFontSize',{}),
                     page_wight=_r.get('pageWight',None),
                     page_hight=_r.get('pageHight',None),
+                    water_mark=_r.get('water_mark',None),
                   ).table_col_split(lineSplit=_r.get('lineSplit',None))
                 _c.savefig(_image_save_link, 
                         bbox_inches='tight', 
@@ -480,6 +482,12 @@ def genTable():
                     the_row_font_size=_r.get('theRowFontSize',{}),
                     page_wight=_r.get('pageWight',None),
                     page_hight=_r.get('pageHight',None),
+                    the_auto_line_color=_r.get('theAutoLineColor',[]),
+                    the_bar_col=_r.get('theBarColor',[]),
+                    the_bars_col=_r.get('theBarsColor',[]),
+                    the_donut_col=_r.get('theDonutColor',[]),
+                    the_stars_col=_r.get('theStarsColor',[]),
+                    water_mark=_r.get('water_mark',None),
                   ).double_head_table(groupHeader=_r['groupHeader'],lineSplit=_r.get('lineSplit',None))
                 
                 _c.savefig(_image_save_link, 
@@ -489,8 +497,6 @@ def genTable():
 
     else:
         return 'The legend type is incorrect, please check!'     
-
-
 
 
 

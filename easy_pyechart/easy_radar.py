@@ -1,9 +1,9 @@
-from pyecharts import options as opts
-from typing import Any,Optional
-from pyecharts.charts import Radar
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from pyecharts import options as opts
+from typing import Any,Optional
+from pyecharts.charts import Radar
 from easy_pyechart import constants,baseParams,radar_base_config,round_radar_base_config
 
 

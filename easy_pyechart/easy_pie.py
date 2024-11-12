@@ -1,10 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from typing import Any,Optional
 from pyecharts.charts import Pie
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import pie_base_config,constants,double_pie_base_config
 
 class epie():

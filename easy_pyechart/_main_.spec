@@ -6,7 +6,7 @@ block_cipher = None
 
 a = Analysis(
     ['_main_.py'],
-    pathex=['D:\\plg_resource\\easy_pyechart.py\\easy_pyechart'],
+    pathex=['E:\\project\\easy_pyechartpy\\easy_pyechart'],
     binaries=[],
     datas=[('D:\\python3\\Lib\\site-packages\\*.*', '.'),
 	('.')],

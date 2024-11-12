@@ -239,4 +239,4 @@ def test1():
                         bbox_inches='tight',
                         pad_inches=0,dpi=600)
 
-#test1()
+test1()

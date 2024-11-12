@@ -1,11 +1,11 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import _grid_base_config, constants, set_water_marking, _set_logo_, _set_logo_ratate,_page_layout_base_config
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from typing import Any, Optional
 from pyecharts.charts import Grid
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 设置图表组合配装的方法实现
 '''

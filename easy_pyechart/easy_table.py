@@ -1,10 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pyecharts import options as opts
 from typing import Any,Optional
 from pyecharts.components import Table
 from pyecharts.options import ComponentTitleOpts
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import constants,baseParams,table_base_config
 import matplotlib.pyplot as plt
 

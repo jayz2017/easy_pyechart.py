@@ -1,8 +1,8 @@
-from pyecharts.charts import TreeMap
-from typing import Optional
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from pyecharts.charts import TreeMap
+from typing import Optional
 from easy_pyechart import constants,baseParams,treeMap_base_config
 
 class eTreeMap():

@@ -1,11 +1,12 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import _funnel_base_config, constants
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from typing import Any, Optional
 from pyecharts.charts import Funnel
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 '''漏斗图'''
 class eFunnel():

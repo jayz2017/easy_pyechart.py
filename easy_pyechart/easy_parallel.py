@@ -1,14 +1,14 @@
 ''''
 并行坐标系的图例，能够展示各个数据相对于两外一组数据时的有关量
 '''
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import parallel_base_config, constants
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from typing import Any, Optional
 from pyecharts.charts import Parallel
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from typing import Any, Optional, Union
 from pyecharts.options.series_options import Numeric
 

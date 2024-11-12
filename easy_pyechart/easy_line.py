@@ -1,12 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from easy_pyechart import baseParams, constants, line_base_config,gradientLine_base_config
 from pyecharts.commons.utils import JsCode
 import pyecharts.options as opts
 from pyecharts.options.series_options import Numeric
 from typing import Any, Optional, Union
 from pyecharts.charts import Line
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 '''折线'''
 class eLine():

@@ -1,9 +1,9 @@
-from pyecharts import options as opts
-from typing import Any,Optional
-from pyecharts.charts import Sankey
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from pyecharts import options as opts
+from typing import Any,Optional
+from pyecharts.charts import Sankey
 from easy_pyechart import constants,baseParams,sankey_base_config
 
 class eSankey():

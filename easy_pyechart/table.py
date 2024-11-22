@@ -37,7 +37,8 @@ class table():
                 #表格行整体宽度压缩比例，默认是3
                 line_comp_ratio:Optional[int] = 3,
                 #水印文本内容
-                water_mark=None
+                water_mark=None,
+                _image_save_link = None
                  ) :
         self.opts: dict = {
                 "page_wight":page_wight,
@@ -56,7 +57,8 @@ class table():
                 "the_stars_col":the_stars_col,
                 "the_bar_col":the_bar_col,
                 "the_bars_col":the_bars_col,
-                "water_mark":water_mark
+                "water_mark":water_mark,
+                "_image_save_link":_image_save_link
                 }
     #基本表格图，没有上面之外的样式设置    
     def base_table(self):
@@ -189,7 +191,7 @@ def test_double_head():
 
 def test1():
     _r={
-        'imageSaveLink': r'F:\ss\dbfa6f4e-eeea-449c-2-a3138ba2.png',
+        'imageSaveLink': r'E:\ss\dbfa6f4e-eeea-449c-2-a3138ba2.png',
         'data': [   
                     ['西蒙斯',			'24:31:00',	8,	6,  23.3,  0.45,   23,	'5',	'2',	'3',	'5 ', '5',	'0',	'4',	'4',	'0',	'0',	'0',	'3',	'1',	'0',	'2',	'5'],											
                     ['卡梅隆-约翰逊',	'35:14:00',	14,	2.0, 23,    0.33,   43,	'2',	'0',	'2',	'12', '4',	'8',	'4',	'0',	'4',	'2',	'2',	'4',	'0',	'1',	'0',	'3'],											
@@ -202,7 +204,7 @@ def test1():
         'columns': ['名称','时间', '得分', '正负值' ,'2分%','3分%','罚球%','篮板','前场','后场','出手FM','2分FM','3分FM','命中FA','2分FA','3分FA','出手','罚中','助攻','抢断','盖帽','失误','犯规'],
         'headWidth': {'1': 0.5, '9': 0.1},
         #'pageHight': 475,
-        #'headColors': {' ': '#FFFFFF'}, 
+        #'headColors': {'1': '#FFFFFF'}, 
        # 'pageWight': 1231,
         'type': 'double', 
         'groupHeader': {
@@ -214,7 +216,7 @@ def test1():
             },
         'theAutoLineColor':["2分%",'3分%']    
         }
-    _image_save_link=_r['imageSaveLink']
+    _image_save_link=_r['imageSaveLink'] 
     _c=table(
                     the_row_color=_r.get('theRowColor',{}),
                     columns=_r['columns'],
@@ -233,10 +235,11 @@ def test1():
                     the_donut_col=_r.get('theDonutColor',[]),
                     the_stars_col=_r.get('theStarsColor',[]),
                     water_mark=_r.get('water_mark',None),
+                    _image_save_link=_image_save_link
                   ).double_head_table(groupHeader=_r['groupHeader'],lineSplit=_r.get('lineSplit',None))
     
-    _c.savefig(_image_save_link, 
-                        bbox_inches='tight',
-                        pad_inches=0,dpi=600)
+    # _c.savefig(_image_save_link, 
+    #                     bbox_inches='tight',
+    #                     pad_inches=0,dpi=600)
 
-test1()
+#test1()

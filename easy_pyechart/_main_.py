@@ -440,14 +440,15 @@ def genTable():
                     the_column_font_color=_r.get('theColumnFontColor',{}),
                     the_column_font_size=_r.get('theColumnFontSize',{}),
                     the_row_font_size=_r.get('theRowFontSize',{}),
-                    page_wight=_r.get('pageWight',None),
-                    page_hight=_r.get('pageHight',None),
-                     water_mark=_r.get('water_mark',None),
+                    page_wight=_r.get('pageWight',2000),
+                    page_hight=_r.get('pageHight',900),
+                    water_mark=_r.get('water_mark',None),
+                    _image_save_link=_image_save_link
                   ).base_table()
         
-        _c.savefig(_image_save_link, 
-            bbox_inches='tight', 
-            pad_inches=0,dpi=800)
+        # _c.savefig(_image_save_link, 
+        #     bbox_inches='tight', 
+        #     pad_inches=0,dpi=800)
         return _image_save_link
     
     elif(_type=='lineSplit'):
@@ -461,13 +462,14 @@ def genTable():
                     the_column_font_color=_r.get('theColumnFontColor',{}),
                     the_column_font_size=_r.get('theColumnFontSize',{}),
                     the_row_font_size=_r.get('theRowFontSize',{}),
-                    page_wight=_r.get('pageWight',None),
-                    page_hight=_r.get('pageHight',None),
+                    page_wight=_r.get('pageWight',2000),
+                    page_hight=_r.get('pageHight',900),
                     water_mark=_r.get('water_mark',None),
+                    _image_save_link=_image_save_link
                   ).table_col_split(lineSplit=_r.get('lineSplit',None))
-                _c.savefig(_image_save_link, 
-                        bbox_inches='tight', 
-                        pad_inches=0,dpi=800)
+                # _c.savefig(_image_save_link, 
+                #         bbox_inches='tight', 
+                #         pad_inches=0,dpi=800)
                 return _image_save_link
     elif (_type=='double'):
                 _c=table.table(
@@ -480,19 +482,20 @@ def genTable():
                     the_column_font_color=_r.get('theColumnFontColor',{}),
                     the_column_font_size=_r.get('theColumnFontSize',{}),
                     the_row_font_size=_r.get('theRowFontSize',{}),
-                    page_wight=_r.get('pageWight',None),
-                    page_hight=_r.get('pageHight',None),
+                    page_wight=_r.get('pageWight',2000),
+                    page_hight=_r.get('pageHight',900),
                     the_auto_line_color=_r.get('theAutoLineColor',[]),
                     the_bar_col=_r.get('theBarColor',[]),
                     the_bars_col=_r.get('theBarsColor',[]),
                     the_donut_col=_r.get('theDonutColor',[]),
                     the_stars_col=_r.get('theStarsColor',[]),
                     water_mark=_r.get('water_mark',None),
+                    _image_save_link=_image_save_link
                   ).double_head_table(groupHeader=_r['groupHeader'],lineSplit=_r.get('lineSplit',None))
                 
-                _c.savefig(_image_save_link, 
-                        bbox_inches='tight', 
-                        pad_inches=0,dpi=800)
+                # _c.savefig(_image_save_link, 
+                #         bbox_inches='tight', 
+                #         pad_inches=0,dpi=600)
                 return _image_save_link
 
     else:

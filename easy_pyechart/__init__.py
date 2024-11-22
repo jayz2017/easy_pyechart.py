@@ -8,8 +8,7 @@ import random
 from pyecharts.options import ComponentTitleOpts
 from pyecharts.render import make_snapshot
 from snapshot_phantomjs import snapshot
-import os
-
+import os,gc
 from plottable import Table,ColumnDefinition
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -24,7 +23,7 @@ CurrentConfig.ONLINE_HOST = "http://127.0.0.1:8000//"
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
 default_color_list=["#FFC125","#FF4040","#FF00FF","#C0FF3E","#9A32CD","#B03060","#48D1CC","#00EE00","#0000FF","#00F5FF","#228B22"]
-
+matplotlib.use('Agg')  # 设置Agg为非交互式后端
 class baseParams():
     def __init__(
         self,
@@ -393,7 +392,7 @@ def line_base_config(self):
                 _setMarkLine = opts.MarkLineOpts(
                     data=i['setMarkLine']
                 )
-        except:
+        except :
             _setMarkPoint = None
             _setMarkLine = None
 
@@ -989,16 +988,8 @@ def table_base_config(self,lineSplit):
                 )    
     #设置行颜色
     for i in range(nrows):
-        _rowColor =the_row_color.get(str(i),None)
-        if i ==0:
-            tab.rows[0].set_facecolor("#4F5F78")
-        elif str(i) in the_row_color.keys():
-            tab.rows[i].set_facecolor(_rowColor)     
-        elif i%2==0:
-            tab.rows[i].set_facecolor("#FFFFFF")  
-        elif i%2!=0:
-            tab.rows[i].set_facecolor("#F2F2F2")  
-
+        if str(i) in the_row_color.keys()  :
+            tab.rows[i].set_facecolor(the_row_color.get(str(i)))     
 
     for i in  head_colors.keys():      
         #设置表格列颜色
@@ -1023,8 +1014,24 @@ def table_base_config(self,lineSplit):
         col =tab.rows.get(i,None)
         if col !=None : 
             tab.rows[i].set_fontcolor(the_column_font_color[i])
-    fig.subplots_adjust(top=0.95)        
-    return  fig
+    fig.subplots_adjust(top=0.95)  
+    _image_save_link=self.opts["_image_save_link"]
+    try:
+        fig.savefig(_image_save_link, 
+                            bbox_inches='tight', 
+                            pad_inches=0,dpi=600)
+    except Exception as e:
+        print("生成表格图时出现问题:",e)
+        plt.close()
+    finally:        
+        # 关闭图形对象
+        plt.close()
+        # 删除对图形对象的引用
+        del fig
+        del ax
+        # 手动触发垃圾回收
+        gc.collect()   
+    return  None
           
 def double_head_config(self,groupHeader,lineSplit):
     page_wight = self.opts["page_wight"]
@@ -1035,7 +1042,7 @@ def double_head_config(self,groupHeader,lineSplit):
     head_width = self.opts["head_width"]
     the_row_color = self.opts["the_row_color"]
     line_comp_ratio = self.opts["line_comp_ratio"]
-
+    _image_save_link=self.opts["_image_save_link"]
     the_row_font_size = self.opts["the_row_font_size"]
     the_column_font_size = self.opts["the_column_font_size"]
     the_column_font_color = self.opts["the_column_font_color"]
@@ -1208,10 +1215,10 @@ def double_head_config(self,groupHeader,lineSplit):
     if len(the_auto_line_color)>0:
         tab.autoset_fontcolors(colnames=the_auto_line_color)
     #设置行颜色
-    if len(the_auto_line_color)==0:
-        for i in range(nrows):
-            _rowColor =the_row_color.get(str(i),None)
-            tab.rows[i].set_facecolor(_rowColor) 
+    #if len(the_auto_line_color)==0:
+    for i in range(nrows):
+        if str(i) in the_row_color.keys():
+            tab.rows[i].set_facecolor(the_row_color.get(str(i)))  
     
     for i in  head_colors.keys():      
             #设置表格列颜色
@@ -1237,7 +1244,22 @@ def double_head_config(self,groupHeader,lineSplit):
         if col !=None : 
             tab.rows[i].set_fontcolor(the_column_font_color[i])
     fig.subplots_adjust()
-    return  fig    
+    try:
+        fig.savefig(_image_save_link, 
+                            bbox_inches='tight', 
+                            pad_inches=0,dpi=600)
+    except Exception as e:
+        print("生成表格图时出现问题:",e)
+        plt.close()
+    finally:        
+        # 关闭图形对象
+        plt.close()
+        # 删除对图形对象的引用
+        del fig
+        del ax
+        # 手动触发垃圾回收
+        gc.collect()   
+    return  None
 
 
 # #保存为图片

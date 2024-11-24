@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib as mpl
 import os
 #投篮球场散点图存储基本地址
-baseGenImageUrl ='C:\\testimage\\{name}'
+#baseGenImageUrl ='C:\\testimage\\{name}'
 
 def draw_ball_field(color="#20458C", lw=2):
      """ 绘制篮球场 """ 
@@ -76,12 +76,15 @@ def _excutePlayerShootWriteImage(inShoot,noShoot,imageName):
     # 绘制散点图
     for i in range(len(inShoot)):
         _in_=inShoot[i]
+        axs.scatter(x=_in_["adj_x"], y=_in_["adj_y"], s=30, marker="o", edgecolors="#3A7711", color="#F0F0F0", linewidths=2)
+    for i in range(len(noShoot)):
         _out_=noShoot[i]
         axs.scatter(x=_out_["adj_x"], y=_out_["adj_y"], s=30, marker="x", color="#A82B2B")
-        axs.scatter(x=_in_["adj_x"], y=_in_["adj_y"], s=30, marker="o", edgecolors="#3A7711", color="#F0F0F0", linewidths=2)
     # 添加备注信息
     plt.annotate("By haochen", xy=(100, 160), xytext=(178, 418))
-    plt.savefig(baseGenImageUrl.format(name=imageName)) 
+    #plt.axis('off')
+    plt.savefig(imageName,bbox_inches='tight',pad_inches=0.1)
+    plt.close()
     #plt.show()
 
 def colormap(): 
@@ -110,5 +113,6 @@ def heatPowerImageWrite(_shoot_list_,imageName):
     lines.spines["top"].set_color("none")
     lines.spines["left"].set_color("none")
     # 去除坐标轴标签
-    ax.axis("off")
-    plt.savefig(baseGenImageUrl.format(name=imageName)) 
+    #ax.axis("off")
+    plt.savefig(imageName,bbox_inches='tight',pad_inches=0.1)
+    plt.close()

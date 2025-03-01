@@ -100,4 +100,30 @@ class eLine():
         self.opts.update(baseParams.opts)
         return gradientLine_base_config(self)
 
+    def doubleLine(self,baseParams):
+        self.opts.update(baseParams.opts)
+        c = Line(init_opts=opts.InitOpts(bg_color="white"))
+        c.add_xaxis(xaxis_data=self.opts['xList'])
+        for i in self.opts['yList']:
+            c.add_yaxis(
+                series_name=i['name'],
+                y_axis=i['value'],
+                symbol_size=6,
+                linestyle_opts=opts.LineStyleOpts(width=3),
+                # label_opts=opts.LabelOpts(
+                #     is_show=True, position="top"),
+            )
+        c.set_global_opts(
+                title_opts=opts.TitleOpts(title=self.opts['title'], pos_left="center"),
+                tooltip_opts=opts.TooltipOpts(trigger="item", formatter="{a} <br/>{b} : {c}"),
+                legend_opts=opts.LegendOpts(pos_left="left"),
+                xaxis_opts=opts.AxisOpts(type_="category", name=""),
+                yaxis_opts=opts.AxisOpts(
+                    type_="value",
+                    name="分值",
+                    splitline_opts=opts.SplitLineOpts(is_show=True),
+                    is_scale=True,
+                ),
+            )
+        return c
 

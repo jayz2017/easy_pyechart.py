@@ -56,6 +56,7 @@ class eBar():
                 yaxis_index=1,
                 y_axis=extraYList,
                 label_opts=opts.LabelOpts(is_show=False),
+                linestyle_opts=opts.LineStyleOpts(width=4),
             )
         )
         return  _c.overlap(line)

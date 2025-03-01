@@ -109,4 +109,56 @@ def test_gradientLine():
     #save_static_image(ee,"out1.png")
     ee.render("line_color_with_js_func.html")
 
-test_gradientLine()
+#test_gradientLine()
+
+
+# from PIL import Image
+# # 打开图表图片和额外的图片
+# chart_img = Image.open(r"E:\project\easy_pyechartpy\553682_playerNumTable.png")
+# extra_img = Image.open(r"C:\Users\chenhao\Desktop\1\开拓者\stand\1631133.png").convert("RGBA")  # 替换为你的图片路径
+
+# # 调整左侧图片的高度（按比例缩放）
+# new_height = int(chart_img.height )  # 左侧图片高度设置为图表高度的 1.2 倍
+# aspect_ratio = extra_img.width / extra_img.height  # 保持宽高比
+# new_width = int(new_height * aspect_ratio)
+# extra_img_resized = extra_img.resize((new_width, new_height))
+
+# # 创建一个新的画布
+# distance_between_images = -150  # 设置左右图片之间的距离
+# canvas_width = extra_img_resized.width + distance_between_images + chart_img.width
+# canvas_height = max(chart_img.height, extra_img_resized.height)
+# canvas = Image.new("RGB", (canvas_width, canvas_height), color=(255, 255, 255))  # 白色背景
+
+# # 将两张图片粘贴到画布上
+# canvas.paste(extra_img_resized, (0, 0))  # 左侧放置额外图片
+# canvas.paste(chart_img, (extra_img_resized.width + distance_between_images, 0))  # 右侧放置图表图片
+
+# # 保存最终结果
+# canvas.save(r"E:\project\easy_pyechartpy\2223211.png")
+
+
+# from PIL import Image
+
+# # 加载大图片和小图片
+# background_img = Image.open(r"E:\project\easy_pyechartpy\1626179_all_shoot.png")  # 替换为你的大图片路径
+# overlay_img = Image.open(r"C:\Users\chenhao\Desktop\1\76人\head\200768.png")    # 替换为你的小图片路径
+
+# # 确保小图片支持透明（转换为RGBA模式）
+# overlay_img = overlay_img.convert("RGBA")
+
+# # 获取图片尺寸
+# bg_width, bg_height = background_img.size
+# ov_width, ov_height = overlay_img.size
+
+# # 计算小图片放置的位置（左下角）
+# position = (0, bg_height - ov_height)  # 左下角位置
+
+# # 创建一个新的画布（如果需要保留透明背景，可以设置为RGBA模式）
+# if background_img.mode != "RGBA":
+#     background_img = background_img.convert("RGBA")
+
+# # 将小图片粘贴到大图片上
+# background_img.paste(overlay_img, position, mask=overlay_img)  # 使用mask保持透明效果
+
+# # 保存最终结果
+# background_img.save("result_image.png")

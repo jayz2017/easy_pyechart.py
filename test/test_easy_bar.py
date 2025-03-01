@@ -38,4 +38,7 @@ def _test_bar_line():
     #_p.render("mixed_bar_and_line.html")
     save_static_image(_p,"2223211.png")
     
-_test_bar_line()
+#_test_bar_line()
+
+
+

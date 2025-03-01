@@ -83,7 +83,6 @@ class basePosition():
 
 def _init_lengend(self):
     chart = self.opts['lengend']
-
     try:
         if self.opts['background_color_js'] != None:
             c = (

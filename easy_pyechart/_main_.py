@@ -6,6 +6,7 @@ from flask import Flask, request
 import json
 app = Flask(__name__)
 import pyecharts.options as opts
+from PIL import Image
 '''主要针对的是使用baseParams作为基本参数获取的图例模型'''
 def packBaseParams(params):
     values = {}
@@ -87,10 +88,10 @@ def easyModelLegendToSaveImage(water_marking,easyModelLegend,saveUrl):
 def excute_easy_Bar(type):
     params = json.loads(request.get_data())
     _getValue = packParams(params)
-    if (type(_getValue) == str):
-        return _getValue
-    easyModel = easy_Bar.eBar(title=_getValue['title'], subTitle=_getValue['subTitle'], lableList=_getValue['lableList'],
-                             valueList=_getValue['valueList'], legendsOpts=_getValue['legendsOpts'], backgroundImageUrl=_getValue['backgroundImageUrl'])
+    # if (type(_getValue) == str):
+    #     return _getValue
+    easyModel = easy_Bar.eBar(title=_getValue['title'], subTitle=_getValue.get('subTitle'), lableList=_getValue['lableList'],
+                             valueList=_getValue['valueList'], legendsOpts=_getValue.get('legendsOpts',None), backgroundImageUrl=_getValue.get('backgroundImageUrl',None))
 
     if (type == 'bar'):
         easyModelLegend = easyModel._stack_bar_percent()
@@ -102,7 +103,7 @@ def excute_easy_Bar(type):
         extraLegendName = params['extraLegendName']
         easyModelLegend = easyModel._mixed_bar_and_line(
             extraYname=extraYname, extraYList=extraYList, extraLegendName=extraLegendName)
-        easyModelLegendToSaveImage(_getValue['water_marking'],easyModelLegend,_getValue['saveUrl'])    
+        easyModelLegendToSaveImage(_getValue.get('water_marking',''),easyModelLegend,_getValue['saveUrl'])    
     else:
         return {'error':404}
     return {'sucessful':200}
@@ -201,6 +202,9 @@ def excute_easy_Line(type):
     #基本折线图
     if(type =='basicLine'):
         easyModelLegend = easyModel.basicLine(_baseParams)
+    #基本折线图
+    elif(type =='doubleLine'):
+        easyModelLegend = easyModel.doubleLine(_baseParams)
     # 上下两个x轴的数据图    
     elif(type =='upDownXLine'):
         try:
@@ -214,6 +218,11 @@ def excute_easy_Line(type):
     else:
         return 'erro,找不到对应的图例模型'    
     easyModelLegendToSaveImage(water_marking,easyModelLegend,saveUrl) 
+    try:
+        if 'playerId' in _rDate and _rDate['playerId'] is not None:
+            saveLeftPiJie(saveUrl,_rDate['playerId'],_rDate['teamName'])
+    except:
+        1 
     return {'sucessful':200}
 
 #水球图
@@ -418,6 +427,7 @@ def excute_easy_table(type):
 '''投射图'''
 @app.post("/easy/shoot/image/<type>/")
 def excute_easy_shootImage(type):
+    #print(request.get_data())
     _rDate =json.loads(request.get_data())
     imageName = _rDate['imageName']
     if(type =='scatter'):
@@ -427,6 +437,11 @@ def excute_easy_shootImage(type):
     elif(type =='hot'):
         _shoot_list_ = _rDate['_shoot_list_']
         easy_shoot.heatPowerImageWrite(_shoot_list_,imageName)
+    try:
+        if 'playerId' in _rDate and _rDate['playerId'] is not None:
+            saveButtonPiJie(imageName,_rDate['playerId'],_rDate['teamName'])
+    except:
+        1        
     return {'sucessful':200}
 
 @app.post("/easycharts/gen/table/")
@@ -506,6 +521,58 @@ def genTable():
     else:
         return 'The legend type is incorrect, please check!'     
 
+def saveLeftPiJie(mainImageUrl,extraImageId,teamName):
+    extraImageUrl = "C:/haochenkeji/NBA/staticHead/"+teamName+"/stand/"+extraImageId+".png"
+    # 打开图表图片和额外的图片
+    chart_img = Image.open(mainImageUrl)
+    extra_img = Image.open(extraImageUrl)  # 替换为你的图片路径
+
+    # 调整左侧图片的高度（按比例缩放）
+    new_height = int(chart_img.height )  # 左侧图片高度设置为图表高度的 1.2 倍
+    aspect_ratio = extra_img.width / extra_img.height  # 保持宽高比
+    new_width = int(new_height * aspect_ratio)
+    extra_img_resized = extra_img.resize((new_width, new_height))
+
+    # 创建一个新的画布
+    distance_between_images = -150  # 设置左右图片之间的距离
+    canvas_width = extra_img_resized.width + distance_between_images + chart_img.width
+    canvas_height = max(chart_img.height, extra_img_resized.height)
+    canvas = Image.new("RGB", (canvas_width, canvas_height), color=(255, 255, 255))  # 白色背景
+
+    # 将两张图片粘贴到画布上
+    canvas.paste(extra_img_resized, (0, 0))  # 左侧放置额外图片
+    canvas.paste(chart_img, (extra_img_resized.width + distance_between_images, 0))  # 右侧放置图表图片
+
+    # 保存最终结果
+    canvas.save(mainImageUrl)
+
+def saveButtonPiJie(mainImageUrl,extraImageId,teamName):
+    extraImageUrl = "C:/haochenkeji/NBA/staticHead/"+teamName+"/head/"+extraImageId+".png"
+    # 加载大图片和小图片
+    background_img = Image.open(mainImageUrl)  # 替换为你的大图片路径
+    overlay_img = Image.open(extraImageUrl)    # 替换为你的小图片路径
+    # 确保小图片支持透明（转换为RGBA模式）
+    overlay_img = overlay_img.convert("RGBA")
+    # 获取图片尺寸
+    bg_width, bg_height = background_img.size
+    ov_width, ov_height = overlay_img.size
+
+    # 压缩小图片的宽高（例如：缩小到原来的50%）
+    new_ov_width = int(ov_width * 0.7)  # 新宽度
+    new_ov_height = int(ov_height * 0.7)  # 新高度
+    overlay_img_resized = overlay_img.resize((new_ov_width, new_ov_height))
+
+    # 计算小图片放置的位置（左下角）
+    position = (0, bg_height - new_ov_height)  # 左下角位置
+
+    # 创建一个新的画布（如果需要保留透明背景，可以设置为RGBA模式）
+    if background_img.mode != "RGBA":
+        background_img = background_img.convert("RGBA")
+
+    # 将调整大小后的小图片粘贴到大图片上
+    background_img.paste(overlay_img_resized, position, mask=overlay_img_resized)  # 使用mask保持透明效果
+        # 保存最终结果
+    background_img.save(mainImageUrl)
 
 
 if __name__ == '__main__':

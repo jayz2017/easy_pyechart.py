@@ -522,7 +522,7 @@ def genTable():
         return 'The legend type is incorrect, please check!'     
 
 def saveLeftPiJie(mainImageUrl,extraImageId,teamName):
-    extraImageUrl = "C:/haochenkeji/NBA/staticHead/"+teamName+"/stand/"+extraImageId+".png"
+    extraImageUrl = "E:/BuShuserver/excuteFile/NBA/staticHead/"+teamName+"/stand/"+extraImageId+".png"
     # 打开图表图片和额外的图片
     chart_img = Image.open(mainImageUrl)
     extra_img = Image.open(extraImageUrl)  # 替换为你的图片路径
@@ -547,7 +547,7 @@ def saveLeftPiJie(mainImageUrl,extraImageId,teamName):
     canvas.save(mainImageUrl)
 
 def saveButtonPiJie(mainImageUrl,extraImageId,teamName):
-    extraImageUrl = "C:/haochenkeji/NBA/staticHead/"+teamName+"/head/"+extraImageId+".png"
+    extraImageUrl = "E:/BuShuserver/excuteFile/NBA/staticHead/"+teamName+"/head/"+extraImageId+".png"
     # 加载大图片和小图片
     background_img = Image.open(mainImageUrl)  # 替换为你的大图片路径
     overlay_img = Image.open(extraImageUrl)    # 替换为你的小图片路径

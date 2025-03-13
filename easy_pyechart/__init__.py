@@ -942,7 +942,7 @@ def _page_layout_base_config(self):
 #print(os.path.dirname(driver_path))
 #os.pathsep + os.path.dirname(driver_path)
 def save_static_image(tagertLengend,tagertPath):
-    temp_dir=r"C:\haochenkeji\sameTimeJpg"
+    temp_dir=r"E:\BuShuserver\excuteFile\sameTimeJpg"
     # 创建临时文件，指定临时文件的存放目录
     with tempfile.NamedTemporaryFile(delete=False, dir=temp_dir, suffix=".html") as tmp_file:
         temp_path = tmp_file.name

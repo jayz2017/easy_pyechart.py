@@ -9,19 +9,32 @@ from pyecharts.options import ComponentTitleOpts
 # from pyecharts.render import make_snapshot
 # from snapshot_phantomjs import snapshot
 from pyecharts.render.snapshot import make_snapshot
-from snapshot_selenium import snapshot
-import os,gc
-from plottable import Table,ColumnDefinition
+import os,gc,tempfile
+os.environ.setdefault("MPLCONFIGDIR", os.path.join(tempfile.gettempdir(), "matplotlib"))
+try:
+    from snapshot_selenium import snapshot
+except ImportError:
+    snapshot = None
+try:
+    from plottable import Table,ColumnDefinition
+    from plottable.formatters import decimal_to_percent
+    from plottable.plots import bar, percentile_bars, percentile_stars, progress_donut
+    from plottable.cmap import normed_cmap
+except ImportError:
+    Table = None
+    ColumnDefinition = None
+    decimal_to_percent = None
+    bar = None
+    percentile_bars = None
+    percentile_stars = None
+    progress_donut = None
+    normed_cmap = None
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
-from plottable.formatters import decimal_to_percent
-from plottable.plots import bar, percentile_bars, percentile_stars, progress_donut
-from plottable.cmap import normed_cmap
 import matplotlib
 from pyecharts.globals import CurrentConfig
 import math
-import tempfile
 import filelock
 from pyecharts.globals import ThemeType
 import logging
@@ -942,6 +955,8 @@ def _page_layout_base_config(self):
 #print(os.path.dirname(driver_path))
 #os.pathsep + os.path.dirname(driver_path)
 def save_static_image(tagertLengend,tagertPath):
+    if snapshot is None:
+        raise RuntimeError("snapshot_selenium is required to save static images")
     temp_dir=r"E:\BuShuserver\excuteFile\sameTimeJpg"
     # 创建临时文件，指定临时文件的存放目录
     with tempfile.NamedTemporaryFile(delete=False, dir=temp_dir, suffix=".html") as tmp_file:
@@ -965,6 +980,8 @@ def save_static_image(tagertLengend,tagertPath):
     #     os.remove(tagertLengend.render())
 
 def table_base_config(self,lineSplit):
+    if Table is None or ColumnDefinition is None:
+        raise RuntimeError("plottable is required to render table images")
     page_wight = self.opts["page_wight"]
     page_hight = self.opts["page_hight"]
     columns = self.opts["columns"]
@@ -1083,6 +1100,8 @@ def table_base_config(self,lineSplit):
     return  None
           
 def double_head_config(self,groupHeader,lineSplit):
+    if Table is None or ColumnDefinition is None:
+        raise RuntimeError("plottable is required to render table images")
     page_wight = self.opts["page_wight"]
     page_hight = self.opts["page_hight"]
     columns = self.opts["columns"]

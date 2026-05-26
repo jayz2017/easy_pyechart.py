@@ -31,3 +31,7 @@ logs/
 *.log
 rebel.xml
 **/**.html
+outputs/
+.pytest_cache/
+__pycache__/
+*.py[cod]
